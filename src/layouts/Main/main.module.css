@@ -1,0 +1,13 @@
+@import "utils/constants/index.css";
+
+#main {
+  position: fixed;
+  overflow: auto;
+  top: var(--headerHeight);
+  left: var(--sidebarWidth);
+  width: calc(100% - var(--sidebarWidth));
+  height: calc(100% - var(--headerHeight));
+  margin: 0;
+  padding: 40px 60px;
+  /* transition: all 0.25s ease-out; */
+}

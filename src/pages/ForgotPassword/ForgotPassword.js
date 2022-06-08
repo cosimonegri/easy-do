@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Container, Alert, Card, Form, Button } from "react-bootstrap";
 import { useAuth } from "contexts/auth-context";
 
-const ForgotPassword = () => {
+export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -88,5 +88,3 @@ const ForgotPassword = () => {
     </Container>
   );
 };
-
-export default ForgotPassword;

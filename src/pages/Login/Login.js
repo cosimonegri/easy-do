@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import { useAuth } from "contexts/auth-context";
 
-const Login = () => {
+export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -31,7 +31,6 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setIsLoadingGoogle(true);
-
     try {
       await loginWithGoogle();
     } catch (error) {
@@ -51,17 +50,14 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
-
     try {
       await setAuthPersistence(remember);
       console.log("Persistence setted correctly");
     } catch {
       console.log("Failed to set desired persistence");
     }
-
     try {
       const userCredential = await login(email, password);
-
       if (userCredential.user.emailVerified) {
         navigate("/app");
       } else {
@@ -165,6 +161,7 @@ const Login = () => {
                 className="w-100"
                 variant="primary"
                 type="submit"
+                aria-label="login-button"
                 disabled={isLoading || isLoadingGoogle || !isFormValid()}
               >
                 {!isLoading ? (
@@ -197,5 +194,3 @@ const Login = () => {
     </Container>
   );
 };
-
-export default Login;

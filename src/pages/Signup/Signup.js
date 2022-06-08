@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import { useAuth } from "contexts/auth-context";
 
-const Signup = () => {
+export const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -216,5 +216,3 @@ const Signup = () => {
     </Container>
   );
 };
-
-export default Signup;

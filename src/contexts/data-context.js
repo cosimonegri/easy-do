@@ -64,88 +64,77 @@ const DataProvider = ({ children }) => {
   const [isDownloading, dispatch] = useReducer(reducer, initialIsDownloading);
   const { currentUser } = useAuth();
 
-  const addTask = async (title, projectId) => {
+  const addTask = (title, projectId) => {
     const newTask = taskFromTemplate(title, projectId, currentUser.uid);
+    return addDoc(collection(db, "tasks"), newTask);
 
-    try {
-      let docSnap = await addDoc(collection(db, "tasks"), newTask);
-      console.log("Added a task with ID", docSnap.id, "to the database.");
-    } catch (error) {
-      console.log("Could not add the task in the database.");
-      console.log(error);
-    }
+    // try {
+    //   let docSnap = await addDoc(collection(db, "tasks"), newTask);
+    //   console.log("Added a task with ID", docSnap.id, "to the database.");
+    // } catch (error) {
+    //   console.log("Could not add the task in the database.");
+    //   console.log(error);
+    // }
   };
 
-  const deleteTask = async (taskId) => {
-    try {
-      await deleteDoc(doc(db, "tasks", taskId));
-      console.log("Deleted the task from the database.");
-    } catch (error) {
-      console.log("Could not delete the task from the database.");
-      console.log(error);
-    }
+  const deleteTask = (taskId) => {
+    return deleteDoc(doc(db, "tasks", taskId));
+    // try {
+    //   await deleteDoc(doc(db, "tasks", taskId));
+    //   console.log("Deleted the task from the database.");
+    // } catch (error) {
+    //   console.log("Could not delete the task from the database.");
+    //   console.log(error);
+    // }
   };
 
-  const addProject = async (title) => {
+  const addProject = (title) => {
     const newProject = projectFromTemplate(title, currentUser.uid);
-
-    try {
-      let docSnap = await addDoc(collection(db, "projects"), newProject);
-      console.log("Added a project with ID", docSnap.id, "to the database.");
-    } catch (error) {
-      console.log("Could not add the project in the database.");
-      console.log(error);
-    }
+    return addDoc(collection(db, "projects"), newProject);
   };
 
-  const deleteProject = async (projectId, asOwner) => {
-    try {
-      if (asOwner) {
-        const tasksToDeleteQuery = query(
-          collection(db, "tasks"),
-          where("projectId", "==", projectId),
-          where("userId", "==", currentUser.uid)
-        );
+  const deleteProject = (projectId) => {
+    return deleteDoc(doc(db, "projects", projectId));
+    // try {
+    //   if (asOwner) {
+    //     const tasksToDeleteQuery = query(
+    //       collection(db, "tasks"),
+    //       where("projectId", "==", projectId),
+    //       where("userId", "==", currentUser.uid)
+    //     );
 
-        const querySnapshot = await getDocs(tasksToDeleteQuery);
-        querySnapshot.forEach((doc) => {
-          deleteDoc(doc.ref);
-        });
-        console.log("Deleted the tasks of that project from the database.");
-      }
+    //     const querySnapshot = await getDocs(tasksToDeleteQuery);
+    //     querySnapshot.forEach((doc) => {
+    //       deleteDoc(doc.ref);
+    //     });
+    //     console.log("Deleted the tasks of that project from the database.");
+    //   }
 
-      try {
-        await deleteDoc(doc(db, "projects", projectId));
-        console.log("Deleted the project from the database.");
-      } catch (error) {
-        console.log("Could not delete the project from the database.");
-        console.log(error);
-      }
-    } catch (error) {
-      console.log(
-        "Could not delete the tasks of that project from the database."
-      );
-      console.log(error);
-    }
+    //   try {
+    //     await deleteDoc(doc(db, "projects", projectId));
+    //     console.log("Deleted the project from the database.");
+    //   } catch (error) {
+    //     console.log("Could not delete the project from the database.");
+    //     console.log(error);
+    //   }
+    // } catch (error) {
+    //   console.log(
+    //     "Could not delete the tasks of that project from the database."
+    //   );
+    //   console.log(error);
+    // }
   };
 
-  const addInvite = async (toUserEmail, projectId) => {
+  const addInvite = (toUserEmail, projectId) => {
     const newInvite = inviteFromTemplate(
       projectId,
       currentUser.uid,
       toUserEmail
     );
-
-    try {
-      await setDoc(
-        doc(db, "projects", projectId, "invitations", toUserEmail),
-        newInvite
-      );
-      console.log("Added an invite to", toUserEmail, "to the database.");
-    } catch (error) {
-      console.log("Could not add the invite in the database.");
-      console.log(error);
-    }
+    return setDoc(
+      doc(db, "projects", projectId, "invitations", toUserEmail),
+      newInvite
+    );
   };
 
   const acceptInvite = async (projectId) => {
@@ -177,23 +166,17 @@ const DataProvider = ({ children }) => {
     }
   };
 
-  const declineInvite = async (projectId) => {
-    try {
-      await deleteDoc(
-        doc(db, "projects", projectId, "invitations", currentUser.email)
-      );
-      console.log("Deleted the invite from the database.");
-    } catch (error) {
-      console.log("Could not delete the invite from the database.");
-      console.log(error);
-    }
+  const deleteInvite = (projectId) => {
+    return deleteDoc(
+      doc(db, "projects", projectId, "invitations", currentUser.email)
+    );
   };
 
   // ADD MEMBERSHIP e DELETE MEMBERSHIP
 
   // SET DATABASE PERSISTENCE
   useEffect(() => {
-    //HANDLE ERRORS GRAPHICALLY (se browser non supportato, mandare a fanculo)
+    //HANDLE ERRORS GRAPHICALLY
     try {
       enableIndexedDbPersistence(db);
       console.log("Database persistence setted successfully.");
@@ -400,7 +383,7 @@ const DataProvider = ({ children }) => {
     deleteProject,
     addInvite,
     acceptInvite,
-    declineInvite,
+    deleteInvite,
   };
 
   return (

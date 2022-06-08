@@ -17,11 +17,11 @@ import { LoadingScreen } from "layouts/LoadingScreen";
 
 const AuthContext = React.createContext();
 
-export const useAuth = () => {
+const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isRetrievingUser, setIsRetrievingUser] = useState(true);
 
@@ -51,10 +51,10 @@ export const AuthProvider = ({ children }) => {
     return; //
   };
   const setAuthPersistence = (persistent) => {
-    const type = persistent
+    const persistenceType = persistent
       ? browserLocalPersistence
       : browserSessionPersistence;
-    return setPersistence(auth, type);
+    return setPersistence(auth, persistenceType);
   };
 
   useEffect(() => {
@@ -69,8 +69,6 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     currentUser,
-    setCurrentUser,
-    isRetrievingUser,
     signup,
     login,
     logout,
@@ -82,7 +80,9 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {isRetrievingUser ? <LoadingScreen /> : children}
+      {!isRetrievingUser && children}
     </AuthContext.Provider>
   );
 };
+
+export { AuthProvider, useAuth, AuthContext };

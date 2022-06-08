@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "contexts/auth-context";
 import { useData } from "contexts/data-context";
 
@@ -9,7 +9,6 @@ import Signup from "pages/Signup";
 import Login from "pages/Login";
 import ForgotPassword from "pages/ForgotPassword";
 
-import Welcome from "pages/Welcome";
 import Home from "pages/Home";
 import Today from "pages/Today";
 import Tomorrow from "pages/Tomorrow";
@@ -38,14 +37,7 @@ export const RoutesList = () => {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <RequireLogout>
-            <Welcome />
-          </RequireLogout>
-        }
-      />
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route
         path="/signup"
         element={

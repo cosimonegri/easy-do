@@ -28,7 +28,7 @@ export const Header = () => {
 
     try {
       await logout();
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       setError("Failed to log out");
       console.log("failed to log out");

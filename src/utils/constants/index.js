@@ -1,24 +1,3 @@
-export const INIT_DATA = {
-  tasks: [],
-  projects: [],
-};
-
-export const Weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-export const Months = [
-  "Gen",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
 export const grey1 = "#F6F8FA";
 export const grey2 = "#D8E2EB";
 export const grey3 = "#BEC1CC";

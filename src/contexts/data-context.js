@@ -12,12 +12,19 @@ import {
   orderBy,
   onSnapshot,
   enableIndexedDbPersistence,
-  serverTimestamp,
 } from "firebase/firestore";
 
 import { db } from "utils/firebase";
 import { useAuth } from "contexts/auth-context";
 import { LoadingScreen } from "layouts/LoadingScreen";
+
+import {
+  userDataFromTemplate,
+  taskFromTemplate,
+  projectFromTemplate,
+  inviteFromTemplate,
+  membershipFromTemplate,
+} from "utils/helpers";
 
 const DataContext = React.createContext();
 
@@ -27,7 +34,6 @@ const useData = () => {
 
 //ORGANIZE USE EFFECTS IN FUNCTIONS WITH A PROPER NAME
 const DataProvider = ({ children }) => {
-  console.log("start");
   const [myTasks, setMyTasks] = useState([]);
   const [sharedTasks, setSharedTasks] = useState([]);
   const [myProjects, setMyProjects] = useState([]);
@@ -59,13 +65,7 @@ const DataProvider = ({ children }) => {
   const { currentUser } = useAuth();
 
   const addTask = async (title, projectId) => {
-    const newTask = {
-      title: title,
-      userId: currentUser.uid,
-      projectId: projectId,
-      completed: false,
-      createdAt: serverTimestamp(),
-    };
+    const newTask = taskFromTemplate(title, projectId, currentUser.uid);
 
     try {
       let docSnap = await addDoc(collection(db, "tasks"), newTask);
@@ -87,11 +87,7 @@ const DataProvider = ({ children }) => {
   };
 
   const addProject = async (title) => {
-    const newProject = {
-      title: title,
-      userId: currentUser.uid,
-      createdAt: serverTimestamp(),
-    };
+    const newProject = projectFromTemplate(title, currentUser.uid);
 
     try {
       let docSnap = await addDoc(collection(db, "projects"), newProject);
@@ -134,12 +130,11 @@ const DataProvider = ({ children }) => {
   };
 
   const addInvite = async (toUserEmail, projectId) => {
-    const newInvite = {
-      projectId: projectId,
-      fromUserId: currentUser.uid,
-      toUserEmail: toUserEmail,
-      createdAt: serverTimestamp(),
-    };
+    const newInvite = inviteFromTemplate(
+      projectId,
+      currentUser.uid,
+      toUserEmail
+    );
 
     try {
       await setDoc(
@@ -154,13 +149,11 @@ const DataProvider = ({ children }) => {
   };
 
   const acceptInvite = async (projectId) => {
-    const newMembership = {
-      userId: currentUser.uid,
-      userEmail: currentUser.email,
-      projectId: projectId,
-      role: "member",
-      joinedAt: serverTimestamp(),
-    };
+    const newMembership = membershipFromTemplate(
+      projectId,
+      currentUser,
+      "member"
+    );
 
     try {
       await setDoc(
@@ -207,6 +200,7 @@ const DataProvider = ({ children }) => {
     } catch (err) {
       if (err.code === "failed-precondition") {
         console.log(
+          //!!!!
           "Could not set database persistence: Multiple tabs open, persistence can only be enabled in one tab at a time."
         );
       } else if (err.code === "unimplemented") {
@@ -214,7 +208,7 @@ const DataProvider = ({ children }) => {
           "Could not set database persistence: The current browser does not support all of the features required to enable persistence."
         );
       } else {
-        console.log("Could not set database persistence.");
+        throw new Error("Could not set database persistence.");
       }
     }
   }, []);
@@ -222,13 +216,7 @@ const DataProvider = ({ children }) => {
   // SAVE USER DATA
   useEffect(async () => {
     if (currentUser) {
-      const userData = {
-        name: currentUser.displayName,
-        userId: currentUser.uid,
-        emailVerified: currentUser.emailVerified,
-        photoUrl: currentUser.photoURL,
-        createdAt: currentUser.metadata.createdAt,
-      };
+      const userData = userDataFromTemplate(currentUser);
 
       try {
         await setDoc(doc(db, "users", currentUser.email), userData, {

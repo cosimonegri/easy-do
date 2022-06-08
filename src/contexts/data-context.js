@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useReducer } from "react";
 import {
   collection,
   collectionGroup,
@@ -21,12 +21,13 @@ import { LoadingScreen } from "layouts/LoadingScreen";
 
 const DataContext = React.createContext();
 
-export const useData = () => {
+const useData = () => {
   return useContext(DataContext);
 };
 
 //ORGANIZE USE EFFECTS IN FUNCTIONS WITH A PROPER NAME
-export const DataProvider = ({ children }) => {
+const DataProvider = ({ children }) => {
+  console.log("start");
   const [myTasks, setMyTasks] = useState([]);
   const [sharedTasks, setSharedTasks] = useState([]);
   const [myProjects, setMyProjects] = useState([]);
@@ -34,12 +35,27 @@ export const DataProvider = ({ children }) => {
   const [invites, setInvites] = useState([]);
 
   const [hasSavedUserData, setHasSavedUserData] = useState(false);
-  const [isRetrievingMyTasks, setIsRetrievingMyTasks] = useState(true);
-  const [isRetrievingSharedTasks, setIsRetrievingSharedTasks] = useState(false);
-  const [isRetrievingProjects, setIsRetrievingProjects] = useState(true);
-  const [isRetrievingMemberships, setIsRetrievingMemberships] = useState(true);
-  const [isRetrievingInvites, setIsRetrievingInvites] = useState(true);
 
+  const initialIsDownloading = {
+    myTasks: false,
+    sharedTasks: false,
+    myProjects: false,
+    memberships: false,
+    invites: false,
+  };
+
+  const reducer = (state, { type, payload }) => {
+    switch (type) {
+      case "startDownload":
+        return { ...state, [payload]: true };
+      case "endDownload":
+        return { ...state, [payload]: false };
+      default:
+        throw new Error(`Unknown action type: ${type}`);
+    }
+  };
+
+  const [isDownloading, dispatch] = useReducer(reducer, initialIsDownloading);
   const { currentUser } = useAuth();
 
   const addTask = async (title, projectId) => {
@@ -180,6 +196,8 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // ADD MEMBERSHIP e DELETE MEMBERSHIP
+
   // SET DATABASE PERSISTENCE
   useEffect(() => {
     //HANDLE ERRORS GRAPHICALLY (se browser non supportato, mandare a fanculo)
@@ -192,7 +210,7 @@ export const DataProvider = ({ children }) => {
           "Could not set database persistence: Multiple tabs open, persistence can only be enabled in one tab at a time."
         );
       } else if (err.code === "unimplemented") {
-        console.log(
+        throw new Error(
           "Could not set database persistence: The current browser does not support all of the features required to enable persistence."
         );
       } else {
@@ -230,6 +248,8 @@ export const DataProvider = ({ children }) => {
     let unsubscribe;
 
     if (currentUser) {
+      dispatch({ type: "startDownload", payload: "myTasks" });
+
       const tasksQuery = query(
         collection(db, "tasks"),
         where("userId", "==", currentUser.uid),
@@ -245,8 +265,8 @@ export const DataProvider = ({ children }) => {
         );
       });
 
-      console.log("Got tasks");
-      setIsRetrievingMyTasks(false);
+      console.log("Got my tasks");
+      dispatch({ type: "endDownload", payload: "myTasks" });
     }
 
     return unsubscribe;
@@ -257,6 +277,8 @@ export const DataProvider = ({ children }) => {
     let unsubscribe;
 
     if (currentUser) {
+      dispatch({ type: "startDownload", payload: "myProjects" });
+
       const projectsQuery = query(
         collection(db, "projects"),
         where("userId", "==", currentUser.uid)
@@ -273,7 +295,7 @@ export const DataProvider = ({ children }) => {
       });
 
       console.log("Got projects");
-      setIsRetrievingProjects(false);
+      dispatch({ type: "endDownload", payload: "myProjects" });
     }
 
     return unsubscribe;
@@ -284,6 +306,8 @@ export const DataProvider = ({ children }) => {
     let unsubscribe;
 
     if (currentUser) {
+      dispatch({ type: "startDownload", payload: "memberships" });
+
       const membershipsQuery = query(
         collectionGroup(db, "memberships"),
         where("userId", "==", currentUser.uid)
@@ -299,7 +323,7 @@ export const DataProvider = ({ children }) => {
       });
 
       console.log("Got memberships");
-      setIsRetrievingMemberships(false);
+      dispatch({ type: "endDownload", payload: "memberships" });
     }
 
     return unsubscribe;
@@ -310,6 +334,8 @@ export const DataProvider = ({ children }) => {
     let unsubscribe;
 
     if (currentUser) {
+      dispatch({ type: "startDownload", payload: "invites" });
+
       const invitesQuery = query(
         collectionGroup(db, "invitations"),
         where("toUserEmail", "==", currentUser.email)
@@ -325,7 +351,7 @@ export const DataProvider = ({ children }) => {
       });
 
       console.log("Got invites");
-      setIsRetrievingInvites(false);
+      dispatch({ type: "endDownload", payload: "invites" });
     }
 
     return unsubscribe;
@@ -336,7 +362,7 @@ export const DataProvider = ({ children }) => {
     let unsubscribe;
 
     if (currentUser && (memberships.length > 0 || myProjects.length > 0)) {
-      setIsRetrievingSharedTasks(true);
+      dispatch({ type: "startDownload", payload: "sharedTasks" });
 
       console.log(memberships);
       console.log(myProjects);
@@ -367,8 +393,8 @@ export const DataProvider = ({ children }) => {
         );
       });
 
-      console.log("Got tasks");
-      setIsRetrievingSharedTasks(false);
+      console.log("Got shared tasks");
+      dispatch({ type: "endDownload", payload: "sharedTasks" });
     }
 
     return unsubscribe;
@@ -391,20 +417,17 @@ export const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider value={value}>
-      {currentUser &&
-      (!hasSavedUserData ||
-        isRetrievingMyTasks ||
-        isRetrievingSharedTasks ||
-        isRetrievingProjects ||
-        isRetrievingMemberships ||
-        isRetrievingInvites) ? (
-        <LoadingScreen />
-      ) : (
+      {(!currentUser || hasSavedUserData) &&
+      Object.values(isDownloading).every((item) => item === false) ? (
         children
+      ) : (
+        <LoadingScreen />
       )}
     </DataContext.Provider>
   );
 };
+
+export { DataProvider, useData, DataContext };
 
 // ALTERNATIVE FOR QUERING TASKS //
 // let queriedTasks = [];

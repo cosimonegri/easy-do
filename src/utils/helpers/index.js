@@ -28,7 +28,7 @@ export const projectFromTemplate = (title, currentUserId) => {
   };
 };
 
-export const inviteFromTemplate = (projectId, fromUserId, toUserEmail) => {
+export const invitationFromTemplate = (projectId, fromUserId, toUserEmail) => {
   return {
     projectId: projectId,
     fromUserId: fromUserId,
@@ -45,4 +45,19 @@ export const membershipFromTemplate = (projectId, currentUser, role) => {
     role: role,
     joinedAt: serverTimestamp(),
   };
+};
+
+export const getDbPath = (collectionName, documentName, parentProjectName) => {
+  if (["tasks", "projects", "users"].includes(collectionName)) {
+    if (documentName === undefined) {
+      return collectionName;
+    }
+    return `${collectionName}/${documentName}`;
+  }
+
+  if (["invitations", "memberships"].includes(collectionName)) {
+    return `projects/${parentProjectName}/${collectionName}/${documentName}`;
+  }
+
+  throw new Error("Invalid arguments.");
 };

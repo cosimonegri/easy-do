@@ -4,7 +4,7 @@ import { BsFillCircleFill } from "react-icons/bs";
 
 import { useAuth } from "contexts/auth-context";
 import { useData } from "contexts/data-context";
-import { addProject } from "utils/helpers";
+// import { addProject } from "utils/helpers";
 import { colorsList, projectsColorMap } from "utils/constants";
 
 export const AddProjectPopup = ({ close }) => {
@@ -29,18 +29,18 @@ export const AddProjectPopup = ({ close }) => {
 
   const handleSubmitProject = (e) => {
     e.preventDefault();
-    if (
-      projectName &&
-      !projects.map((project) => project["name"]).includes(projectName)
-    ) {
-      addProject(
-        currentUser.uid,
-        projects,
-        setProjects,
-        projectName,
-        projectColor
-      );
-    }
+    // if (
+    //   projectName &&
+    //   !projects.map((project) => project["name"]).includes(projectName)
+    // ) {
+    //   addProject(
+    //     currentUser.uid,
+    //     projects,
+    //     setProjects,
+    //     projectName,
+    //     projectColor
+    //   );
+    // }
     close();
   };
 

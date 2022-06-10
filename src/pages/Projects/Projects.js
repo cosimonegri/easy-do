@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Main from "layouts/Main";
 import { useAuth } from "contexts/auth-context";
 import { useData } from "contexts/data-context";
@@ -7,30 +7,57 @@ import styles from "pages/Projects/projects.module.css";
 
 export const Projects = () => {
   const [invitedUsersEmail, setInvitedUsersEmail] = useState({});
+
   const { currentUser } = useAuth();
   const {
     myProjects,
     memberships,
-    invites,
+    invitations,
+    addTask,
     addProject,
     deleteProject,
-    addTask,
-    addInvite,
-    acceptInvite,
-    declineInvite,
+    addInvitation,
+    deleteInvitation,
+    addMembership,
+    deleteMembership,
   } = useData();
 
-  const handleAddProject = () => {
-    addProject("Project"); // errors handled in the function
-  };
-  const handleDeleteProject = (projectId, asOwner) => {
-    deleteProject(projectId, asOwner); // errors handled in the function
-  };
-  const handleAddTask = (projectId) => {
-    addTask("Task", projectId); // errors handled in the function
+  const handleAddProject = async () => {
+    try {
+      const docRef = await addProject("Project");
+      console.log(`Project added with id ${docRef.id}`);
+    } catch (error) {
+      console.log("Could not add project.");
+      console.log(error);
+    }
   };
 
-  const handleAddInvite = (e, projectId) => {
+  const handleDeleteProject = (projectId) => {
+    console.log("Not implemented.");
+  };
+
+  const handleLeaveProject = async (projectId) => {
+    try {
+      await deleteMembership(projectId);
+      console.log(`Membershpip deleted in project ${projectId}`);
+    } catch (error) {
+      console.log("Could not delete membership.");
+      console.log(error);
+    }
+  };
+
+  const handleAddTask = async (projectId) => {
+    try {
+      const docRef = await addTask("Task", projectId);
+      console.log(`Task added with id ${docRef.id}`);
+    } catch (error) {
+      console.log("Could not delete task.");
+      console.log(error);
+    }
+  };
+
+  //! aggiungere motivi per il fallimento nel mandare l'invito
+  const handleSendInvitation = async (e, projectId) => {
     e.preventDefault();
     const email = invitedUsersEmail[projectId];
 
@@ -38,19 +65,46 @@ export const Projects = () => {
     temp[projectId] = "";
     setInvitedUsersEmail(temp);
 
-    if (email != currentUser.email) {
-      addInvite(email, projectId); // errors handled in the function
-      console.log("Sending invite to", email);
-    } else {
-      console.log("You can't invite yourself");
+    if (email == currentUser.email) {
+      console.log("You can't invite yourself.");
+      return;
+    }
+
+    try {
+      await addInvitation(projectId, email);
+      console.log("Invitation sent to", email);
+    } catch (error) {
+      console.log("Could not send invitation to", email);
+      console.log(error);
     }
   };
 
-  const handleAcceptInvite = (projectId) => {
-    acceptInvite(projectId);
+  const handleAcceptInvitation = async (projectId) => {
+    try {
+      await addMembership(projectId);
+      console.log(`Membership added in project ${projectId}`);
+
+      try {
+        await deleteInvitation(projectId, currentUser.email);
+        console.log(`Invitation deleted in project ${projectId}.`);
+      } catch (error) {
+        console.log("Could not delete invitation.");
+        console.log(error);
+      }
+    } catch (error) {
+      console.log("Could not add membership.");
+      console.log(error);
+    }
   };
-  const handleDeclineInvite = (projectId) => {
-    declineInvite(projectId);
+
+  const handleDeclineInvitation = async (projectId) => {
+    try {
+      await deleteInvitation(projectId, currentUser.email);
+      console.log(`Invitation deleted in project ${projectId}`);
+    } catch (error) {
+      console.log("Could not delete invitation.");
+      console.log(error);
+    }
   };
 
   let myProjectElements = myProjects.map((project) => {
@@ -59,16 +113,13 @@ export const Projects = () => {
         <p className={styles["project-text"]}>
           {project.title} {project.id}
         </p>
-        <button
-          type="button"
-          onClick={() => handleDeleteProject(project.id, true)}
-        >
+        <button type="button" onClick={() => handleDeleteProject(project.id)}>
           Delete Project
         </button>
         <button type="button" onClick={() => handleAddTask(project.id)}>
           Add Task
         </button>
-        <form onSubmit={(e) => handleAddInvite(e, project.id)}>
+        <form onSubmit={(e) => handleSendInvitation(e, project.id)}>
           <label>Share with:</label>
           <input
             type="email"
@@ -92,9 +143,9 @@ export const Projects = () => {
         <p className={styles["project-text"]}>{membership.projectId}</p>
         <button
           type="button"
-          onClick={() => handleDeleteProject(membership.projectId, false)} // trasformare in delete membership
+          onClick={() => handleLeaveProject(membership.projectId)} //! trasformare in delete membership
         >
-          Delete Project
+          Leave Project
         </button>
         <button
           type="button"
@@ -106,23 +157,23 @@ export const Projects = () => {
     );
   });
 
-  let inviteElements = invites.map((invite) => {
+  const invitationElements = invitations.map((invitation) => {
     return (
-      <div className={styles.project} key={invite.projectId}>
+      <div className={styles.project} key={invitation.projectId}>
         <p className={styles["project-text"]}>
-          {invite.fromUserId} {invite.projectId}
+          {invitation.fromUserId} {invitation.projectId}
         </p>
         <button
           type="button"
-          onClick={() => handleAcceptInvite(invite.projectId)}
+          onClick={() => handleAcceptInvitation(invitation.projectId)}
         >
-          Accept invite
+          Accept invitation
         </button>
         <button
           type="button"
-          onClick={() => handleDeclineInvite(invite.projectId)}
+          onClick={() => handleDeclineInvitation(invitation.projectId)}
         >
-          Decline invite
+          Decline invitation
         </button>
       </div>
     );
@@ -137,7 +188,7 @@ export const Projects = () => {
         </button>
       </div>
       <div id={styles["page-content"]}>
-        {myProjectElements} {sharedProjectElements} {inviteElements}
+        {myProjectElements} {sharedProjectElements} {invitationElements}
       </div>
     </Main>
   );

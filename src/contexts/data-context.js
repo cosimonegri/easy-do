@@ -6,9 +6,9 @@ import {
   addDoc,
   setDoc,
   deleteDoc,
+  getDocs,
   query,
   where,
-  orderBy,
   onSnapshot,
   enableIndexedDbPersistence,
 } from "firebase/firestore";
@@ -67,9 +67,21 @@ const DataProvider = ({ children }) => {
     const path = getDbPath("tasks");
     return addDoc(collection(db, path), newTask);
   };
+
   const deleteTask = (taskId) => {
     const path = getDbPath("tasks", taskId);
     return deleteDoc(doc(db, path));
+  };
+
+  const deleteTasksOfProject = async (projectId) => {
+    const tasksToDelete = query(
+      collection(db, "tasks"),
+      where("projectId", "==", projectId)
+    );
+    const snapshot = await getDocs(tasksToDelete);
+    snapshot.forEach((doc) => {
+      deleteDoc(doc.ref);
+    });
   };
 
   const addProject = (title) => {
@@ -77,6 +89,7 @@ const DataProvider = ({ children }) => {
     const path = getDbPath("projects");
     return addDoc(collection(db, path), newProject);
   };
+
   const deleteProject = (projectId) => {
     const path = getDbPath("projects", projectId);
     return deleteDoc(doc(db, path));
@@ -91,10 +104,20 @@ const DataProvider = ({ children }) => {
     const path = getDbPath("invitations", toUserEmail, projectId);
     return setDoc(doc(db, path), newInvitation);
   };
+
   const deleteInvitation = (projectId, toUserEmail) => {
-    //! supportare eliminazione anche per creatore dell'invito
     const path = getDbPath("invitations", toUserEmail, projectId);
     return deleteDoc(doc(db, path));
+  };
+
+  const deleteInvitationsOfProject = async (projectId) => {
+    const invitationsToDelete = query(
+      collection(db, "projects", projectId, "invitations")
+    );
+    const snapshot = await getDocs(invitationsToDelete);
+    snapshot.forEach((doc) => {
+      deleteDoc(doc.ref);
+    });
   };
 
   const addMembership = (projectId) => {
@@ -106,9 +129,20 @@ const DataProvider = ({ children }) => {
     const path = getDbPath("memberships", currentUser.email, projectId);
     return setDoc(doc(db, path), newMembership);
   };
+
   const deleteMembership = (projectId) => {
     const path = getDbPath("memberships", currentUser.email, projectId);
     return deleteDoc(doc(db, path));
+  };
+
+  const deleteMembershipsOfProject = async (projectId) => {
+    const membershipsToDelete = query(
+      collection(db, "projects", projectId, "memberships")
+    );
+    const snapshot = await getDocs(membershipsToDelete);
+    snapshot.forEach((doc) => {
+      deleteDoc(doc.ref);
+    });
   };
 
   const handleSnapshotError = (listenerName) => {
@@ -328,12 +362,15 @@ const DataProvider = ({ children }) => {
     invitations,
     addTask,
     deleteTask,
+    deleteTasksOfProject,
     addProject,
     deleteProject,
     addInvitation,
     deleteInvitation,
+    deleteInvitationsOfProject,
     addMembership,
     deleteMembership,
+    deleteMembershipsOfProject,
   };
 
   return (

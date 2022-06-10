@@ -14,12 +14,15 @@ export const Projects = () => {
     memberships,
     invitations,
     addTask,
+    deleteTasksOfProject,
     addProject,
     deleteProject,
     addInvitation,
     deleteInvitation,
+    deleteInvitationsOfProject,
     addMembership,
     deleteMembership,
+    deleteMembershipsOfProject,
   } = useData();
 
   const handleAddProject = async () => {
@@ -32,14 +35,47 @@ export const Projects = () => {
     }
   };
 
-  const handleDeleteProject = (projectId) => {
-    console.log("Not implemented.");
+  const handleDeleteProject = async (projectId) => {
+    try {
+      await deleteTasksOfProject(projectId);
+      console.log(`Deleted all tasks of project ${projectId}`);
+    } catch (error) {
+      console.log("Could not delete all the tasks of the project.");
+      console.log(error);
+      return;
+    }
+
+    try {
+      await deleteInvitationsOfProject(projectId);
+      console.log(`Deleted all invitations of project ${projectId}`);
+    } catch (error) {
+      console.log("Could not delete all the invitations of the project.");
+      console.log(error);
+      return;
+    }
+
+    try {
+      await deleteMembershipsOfProject(projectId);
+      console.log(`Deleted all memberships of project ${projectId}`);
+    } catch (error) {
+      console.log("Could not delete all the memberships of the project.");
+      console.log(error);
+      return;
+    }
+
+    try {
+      await deleteProject(projectId);
+      console.log("Project deleted.");
+    } catch (error) {
+      console.log("Could not delete project.");
+      console.log(error);
+    }
   };
 
   const handleLeaveProject = async (projectId) => {
     try {
       await deleteMembership(projectId);
-      console.log(`Membershpip deleted in project ${projectId}`);
+      console.log(`Membership deleted in project ${projectId}`);
     } catch (error) {
       console.log("Could not delete membership.");
       console.log(error);
@@ -83,16 +119,17 @@ export const Projects = () => {
     try {
       await addMembership(projectId);
       console.log(`Membership added in project ${projectId}`);
-
-      try {
-        await deleteInvitation(projectId, currentUser.email);
-        console.log(`Invitation deleted in project ${projectId}.`);
-      } catch (error) {
-        console.log("Could not delete invitation.");
-        console.log(error);
-      }
     } catch (error) {
       console.log("Could not add membership.");
+      console.log(error);
+      return;
+    }
+
+    try {
+      await deleteInvitation(projectId, currentUser.email);
+      console.log(`Invitation deleted in project ${projectId}.`);
+    } catch (error) {
+      console.log("Could not delete invitation.");
       console.log(error);
     }
   };

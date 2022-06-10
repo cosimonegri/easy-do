@@ -83,7 +83,6 @@ const DataProvider = ({ children }) => {
   };
 
   const addInvitation = (projectId, toUserEmail) => {
-    //! invertire parametri nella funzione
     const newInvitation = invitationFromTemplate(
       projectId,
       currentUser.uid,
@@ -92,9 +91,9 @@ const DataProvider = ({ children }) => {
     const path = getDbPath("invitations", toUserEmail, projectId);
     return setDoc(doc(db, path), newInvitation);
   };
-  const deleteInvitation = (projectId) => {
+  const deleteInvitation = (projectId, toUserEmail) => {
     //! supportare eliminazione anche per creatore dell'invito
-    const path = getDbPath("invitations", currentUser.email, projectId);
+    const path = getDbPath("invitations", toUserEmail, projectId);
     return deleteDoc(doc(db, path));
   };
 
@@ -112,8 +111,8 @@ const DataProvider = ({ children }) => {
     return deleteDoc(doc(db, path));
   };
 
-  const handleSnapshotError = () => {
-    console.log("skrt skrt"); //! DA FARE
+  const handleSnapshotError = (listenerName) => {
+    console.log(`Error in listener ${listenerName}`); //! Lanciare un errore?
   };
 
   // SET DATABASE PERSISTENCE
@@ -125,7 +124,7 @@ const DataProvider = ({ children }) => {
     } catch (err) {
       if (err.code === "failed-precondition") {
         console.log(
-          //!!!!
+          //! Lanciare un errore?
           "Could not set database persistence: Multiple tabs open, persistence can only be enabled in one tab at a time."
         );
       } else if (err.code === "unimplemented") {
@@ -175,7 +174,7 @@ const DataProvider = ({ children }) => {
           );
         },
         (error) => {
-          handleSnapshotError();
+          handleSnapshotError("myTasks");
         }
       );
 
@@ -205,7 +204,7 @@ const DataProvider = ({ children }) => {
           );
         },
         (error) => {
-          handleSnapshotError();
+          handleSnapshotError("myProjects");
         }
       );
 
@@ -235,7 +234,7 @@ const DataProvider = ({ children }) => {
           );
         },
         (error) => {
-          handleSnapshotError();
+          handleSnapshotError("memberships");
         }
       );
 
@@ -266,7 +265,7 @@ const DataProvider = ({ children }) => {
           );
         },
         (error) => {
-          handleSnapshotError();
+          handleSnapshotError("invitations");
         }
       );
 
@@ -311,7 +310,7 @@ const DataProvider = ({ children }) => {
           );
         },
         (error) => {
-          handleSnapshotError();
+          handleSnapshotError("sharedTasks");
         }
       );
 

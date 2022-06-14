@@ -7,7 +7,7 @@ import { grey1 } from "utils/constants";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "style.css";
 // import "reactjs-popup/dist/index.css";
-// import "react-datepicker/dist/react-datepicker.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 // TODO: creare email supporto per il progetto e metterla sua firebase al posto della mia
 

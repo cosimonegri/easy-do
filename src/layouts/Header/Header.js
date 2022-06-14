@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/auth-context";
 import { useData } from "contexts/data-context";
-import { addProjectPopup } from "components/AddProjectPopup";
 
+import AddTaskPopup from "components/AddTaskPopup";
 import addIcon from "images/add.png";
 import searchIcon from "images/search.png";
 
@@ -14,6 +14,7 @@ export const Header = () => {
   const { currentUser, logout } = useAuth();
   const { addTask } = useData();
 
+  const [isAddTaskPopupOpen, setIsAddTaskPopupOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -36,8 +37,13 @@ export const Header = () => {
     }
   };
 
-  const handleAddTask = () => {
-    addTask("Task", ""); // errors handles in the function
+  const handleAddTaskPopupOpening = () => {
+    console.log("click");
+    setIsAddTaskPopupOpen(true);
+  };
+
+  const handleAddTaskPopupClosing = () => {
+    setIsAddTaskPopupOpen(false);
   };
 
   const handleSearch = () => {
@@ -45,46 +51,52 @@ export const Header = () => {
   };
 
   return (
-    <header id={styles["header-outer"]}>
-      <div id={styles["header-inner"]} style={{ backgroundColor: grey1 }}>
-        <span id={styles["left-header"]}>
-          <img src={searchIcon} width={iconSize} height={iconSize} alt="" />
-          <form id={styles["search-form"]}>
-            <input
-              id={styles["search-box"]}
-              type="search"
-              onClick={handleSearch}
-              placeholder="Search..."
-              // style={{ color: "grey" }} /// SISTEMARE IL COLORE (levarlo dal css)
-            />
-          </form>
-        </span>
+    <>
+      {isAddTaskPopupOpen && (
+        <AddTaskPopup handleClosing={handleAddTaskPopupClosing} />
+      )}
 
-        <span id={styles["right-header"]}>
-          <button type="button" onClick={handleAddTask}>
-            <img src={addIcon} width={iconSize} height={iconSize} alt="" />
-          </button>
-
-          <button
-            id={styles["circle-btn"]}
-            type="button"
-            onClick={handleLogOut}
-            disabled={isLoggingOut}
-            style={{ backgroundColor: grey3 }}
-          >
-            {currentUser.photoURL && (
-              <img
-                src={currentUser.photoURL}
-                width={2 * imgRadius}
-                height={2 * imgRadius}
-                alt=" "
-                style={{ borderRadius: imgRadius.toString() + "px" }}
+      <header id={styles["header-outer"]}>
+        <div id={styles["header-inner"]} style={{ backgroundColor: grey1 }}>
+          <span id={styles["left-header"]}>
+            <img src={searchIcon} width={iconSize} height={iconSize} alt="" />
+            <form id={styles["search-form"]}>
+              <input
+                id={styles["search-box"]}
+                type="search"
+                onClick={handleSearch}
+                placeholder="Search..."
+                // style={{ color: "grey" }} /// SISTEMARE IL COLORE (levarlo dal css)
               />
-            )}
-          </button>
-        </span>
-      </div>
-      <div id={styles.divider} style={{ backgroundColor: grey2 }}></div>
-    </header>
+            </form>
+          </span>
+
+          <span id={styles["right-header"]}>
+            <button type="button" onClick={handleAddTaskPopupOpening}>
+              <img src={addIcon} width={iconSize} height={iconSize} alt="" />
+            </button>
+
+            <button
+              id={styles["circle-btn"]}
+              type="button"
+              onClick={handleLogOut}
+              disabled={isLoggingOut}
+              style={{ backgroundColor: grey3 }}
+            >
+              {currentUser.photoURL && (
+                <img
+                  src={currentUser.photoURL}
+                  width={2 * imgRadius}
+                  height={2 * imgRadius}
+                  alt=" "
+                  style={{ borderRadius: imgRadius.toString() + "px" }}
+                />
+              )}
+            </button>
+          </span>
+        </div>
+        <div id={styles.divider} style={{ backgroundColor: grey2 }}></div>
+      </header>
+    </>
   );
 };

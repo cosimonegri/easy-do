@@ -1,26 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/auth-context";
-import { useData } from "contexts/data-context";
 
 import AddTaskPopup from "components/AddTaskPopup";
+import AddProjectPopup from "components/AddProjectPopup";
 import addIcon from "images/add.png";
 import searchIcon from "images/search.png";
 
 import { grey1, grey2, grey3 } from "utils/constants";
 import styles from "layouts/Header/header.module.css";
 
-export const Header = () => {
-  const { currentUser, logout } = useAuth();
-  const { addTask } = useData();
+const imgRadius = 18;
+const iconSize = 24;
 
-  const [isAddTaskPopupOpen, setIsAddTaskPopupOpen] = useState(false);
+const initialTask = {
+  title: "",
+  projectId: "",
+  projectTitle: "",
+  dueDate: new Date(),
+  completed: false,
+};
+
+const reducer = (state, { type, payload }) => {
+  switch (type) {
+    case "update":
+      return {
+        ...state,
+        [payload.key]: payload.value,
+      };
+    case "clear":
+      return { ...initialTask };
+    default:
+      throw new Error(`Unknown action type: ${type}`);
+  }
+};
+
+export const Header = () => {
+  const [newTask, dispatch] = useReducer(reducer, initialTask);
+  const [newProjectTitle, setNewProjectTitle] = useState("");
+
+  const [showAddTaskPopup, setShowAddTaskPopup] = useState(false);
+  const [showAddProjectPopup, setShowAddProjectPopup] = useState(false);
+
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  const imgRadius = 18;
-  const iconSize = 24;
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogOut = async (e) => {
     e.preventDefault();
@@ -37,13 +63,22 @@ export const Header = () => {
     }
   };
 
-  const handleAddTaskPopupOpening = () => {
-    console.log("click");
-    setIsAddTaskPopupOpen(true);
+  const handleAddTaskPopupOpen = () => {
+    dispatch({ type: "clear" });
+    setShowAddTaskPopup(true);
   };
 
-  const handleAddTaskPopupClosing = () => {
-    setIsAddTaskPopupOpen(false);
+  const handleAddTaskPopupClose = () => {
+    setShowAddTaskPopup(false);
+  };
+
+  const handleAddProjectPopupOpen = () => {
+    setNewProjectTitle("");
+    setShowAddProjectPopup(true);
+  };
+
+  const handleAddProjectPopupClose = () => {
+    setShowAddProjectPopup(false);
   };
 
   const handleSearch = () => {
@@ -52,9 +87,19 @@ export const Header = () => {
 
   return (
     <>
-      {isAddTaskPopupOpen && (
-        <AddTaskPopup handleClosing={handleAddTaskPopupClosing} />
-      )}
+      <AddTaskPopup
+        show={showAddTaskPopup}
+        handleClose={handleAddTaskPopupClose}
+        newTask={newTask}
+        dispatch={dispatch}
+      />
+
+      <AddProjectPopup
+        show={showAddProjectPopup}
+        handleClose={handleAddProjectPopupClose}
+        newProjectTitle={newProjectTitle}
+        setNewProjectTitle={setNewProjectTitle}
+      />
 
       <header id={styles["header-outer"]}>
         <div id={styles["header-inner"]} style={{ backgroundColor: grey1 }}>
@@ -72,7 +117,11 @@ export const Header = () => {
           </span>
 
           <span id={styles["right-header"]}>
-            <button type="button" onClick={handleAddTaskPopupOpening}>
+            <button type="button" onClick={handleAddTaskPopupOpen}>
+              <img src={addIcon} width={iconSize} height={iconSize} alt="" />
+            </button>
+
+            <button type="button" onClick={handleAddProjectPopupOpen}>
               <img src={addIcon} width={iconSize} height={iconSize} alt="" />
             </button>
 

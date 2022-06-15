@@ -17,8 +17,10 @@ export const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [remember, setRemember] = useState(true);
+
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
 
@@ -79,17 +81,6 @@ export const Signup = () => {
       } catch (error) {
         setError("Failed to send verification email");
       }
-
-      // try {
-      //   await createUserData(
-      //     userCredential.user.uid,
-      //     userCredential.user.email
-      //   );
-      //   console.log("successfully initialized account data");
-      // } catch (error) {
-      //   setError("Failed to create user data");
-      //   console.log("failed to create user data");
-      // }
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setError("Email already in use");
@@ -109,10 +100,7 @@ export const Signup = () => {
   };
 
   return (
-    <Container
-      className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh" }}
-    >
+    <Container className="min-vh-100 d-flex justify-content-center align-items-center">
       <div className="w-100" style={{ maxWidth: "400px" }}>
         <Card className="rounded p-2 pb-1 mt-3 mb-3">
           <Card.Body>

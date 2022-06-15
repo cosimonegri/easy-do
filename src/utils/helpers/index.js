@@ -10,12 +10,13 @@ export const userDataFromTemplate = (currentUser) => {
   };
 };
 
-export const taskFromTemplate = (title, projectId, currentUserId) => {
+export const taskFromTemplate = (taskData, currentUserId) => {
   return {
-    title: title,
+    title: taskData.title,
     userId: currentUserId,
-    projectId: projectId,
-    completed: false,
+    projectId: taskData.projectId,
+    dueDate: taskData.dueDate,
+    completed: taskData.completed,
     createdAt: serverTimestamp(),
   };
 };

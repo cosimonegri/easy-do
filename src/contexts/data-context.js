@@ -62,8 +62,8 @@ const DataProvider = ({ children }) => {
   const [hasSavedUserData, setHasSavedUserData] = useState(false);
   const { currentUser } = useAuth();
 
-  const addTask = (title, projectId) => {
-    const newTask = taskFromTemplate(title, projectId, currentUser.uid);
+  const addTask = (taskData) => {
+    const newTask = taskFromTemplate(taskData, currentUser.uid);
     const path = getDbPath("tasks");
     return addDoc(collection(db, path), newTask);
   };

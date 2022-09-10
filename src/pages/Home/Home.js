@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
+
+import Task from "components/Task";
 import Main from "layouts/Main";
 import { useData } from "contexts/data-context";
 
@@ -12,16 +14,7 @@ export const Home = () => {
   };
 
   let taskElements = [...myTasks, ...sharedTasks].map((task) => {
-    return (
-      <div className={styles.task} key={task.id}>
-        <p className={styles["task-text"]}>
-          {task.title} {task.id} {task.projectId && task.projectId}
-        </p>
-        <button type="button" onClick={() => handleDeleteTask(task.id)}>
-          Delete Task
-        </button>
-      </div>
-    );
+    return <Task task={task} key={task.id} />;
   });
 
   return (

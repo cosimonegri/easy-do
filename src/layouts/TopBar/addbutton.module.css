@@ -1,0 +1,17 @@
+.addbutton {
+  border: none;
+  border-radius: 5px;
+  padding: 6px 12px 6px 18px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon {
+  margin-left: 3px;
+}

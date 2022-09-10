@@ -9,5 +9,4 @@
   height: calc(100% - var(--headerHeight));
   margin: 0;
   padding: 40px 60px;
-  /* transition: all 0.25s ease-out; */
 }

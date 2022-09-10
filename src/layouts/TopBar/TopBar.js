@@ -2,16 +2,13 @@ import React, { useState, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/auth-context";
 
+import ProfileButton from "layouts/TopBar/ProfileButton";
+import AddButton from "layouts/TopBar/AddButton";
 import AddTaskPopup from "components/AddTaskPopup";
 import AddProjectPopup from "components/AddProjectPopup";
-import addIcon from "images/add.png";
-import searchIcon from "images/search.png";
 
-import { grey1, grey2, grey3 } from "utils/constants";
-import styles from "layouts/Header/header.module.css";
-
-const imgRadius = 18;
-const iconSize = 24;
+import { grey1, grey2 } from "utils/constants";
+import styles from "layouts/TopBar/topbar.module.css";
 
 const initialTask = {
   title: "",
@@ -35,7 +32,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-export const Header = () => {
+export const TopBar = () => {
   const [newTask, dispatch] = useReducer(reducer, initialTask);
   const [newProjectTitle, setNewProjectTitle] = useState("");
 
@@ -81,10 +78,6 @@ export const Header = () => {
     setShowAddProjectPopup(false);
   };
 
-  const handleSearch = () => {
-    console.log("Open search popup");
-  };
-
   return (
     <>
       <AddTaskPopup
@@ -104,44 +97,22 @@ export const Header = () => {
       <header id={styles["header-outer"]}>
         <div id={styles["header-inner"]} style={{ backgroundColor: grey1 }}>
           <span id={styles["left-header"]}>
-            <img src={searchIcon} width={iconSize} height={iconSize} alt="" />
-            <form id={styles["search-form"]}>
-              <input
-                id={styles["search-box"]}
-                type="search"
-                onClick={handleSearch}
-                placeholder="Search..."
-                // style={{ color: "grey" }} /// SISTEMARE IL COLORE (levarlo dal css)
-              />
-            </form>
+            <AddButton
+              text={"Add Task"}
+              onClickFunction={handleAddTaskPopupOpen}
+            />
+            <AddButton
+              text={"Add Project"}
+              onClickFunction={handleAddProjectPopupOpen}
+            />
           </span>
 
           <span id={styles["right-header"]}>
-            <button type="button" onClick={handleAddTaskPopupOpen}>
-              <img src={addIcon} width={iconSize} height={iconSize} alt="" />
-            </button>
-
-            <button type="button" onClick={handleAddProjectPopupOpen}>
-              <img src={addIcon} width={iconSize} height={iconSize} alt="" />
-            </button>
-
-            <button
-              id={styles["circle-btn"]}
-              type="button"
-              onClick={handleLogOut}
-              disabled={isLoggingOut}
-              style={{ backgroundColor: grey3 }}
-            >
-              {currentUser.photoURL && (
-                <img
-                  src={currentUser.photoURL}
-                  width={2 * imgRadius}
-                  height={2 * imgRadius}
-                  alt=" "
-                  style={{ borderRadius: imgRadius.toString() + "px" }}
-                />
-              )}
-            </button>
+            <ProfileButton
+              onClickFunction={handleLogOut}
+              currentUser={currentUser}
+              isLoggingOut={isLoggingOut}
+            />
           </span>
         </div>
         <div id={styles.divider} style={{ backgroundColor: grey2 }}></div>

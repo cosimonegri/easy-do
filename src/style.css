@@ -16,5 +16,31 @@ img {
 }
 
 button {
-  cursor: pointer;
+  cursor: pointer !important;
 }
+
+/* .btn-primary,
+.btn-primary:hover,
+.btn-outline-primary:hover,
+.btn-primary:active,
+.btn-primary:visited {
+  background-color: var(--mainColor) !important;
+  border-color: var(--mainColor) !important;
+  color: white !important;
+}
+
+.btn-outline-primary,
+.btn-outline-primary:visited,
+.btn-outline-primary:active {
+  border-color: var(--mainColor) !important;
+  color: var(--mainColor) !important;
+}
+
+textarea,
+textarea:hover,
+textarea:active,
+textarea:focus {
+  outline: 0px !important;
+  -webkit-appearance: none;
+  box-shadow: none !important;
+} */

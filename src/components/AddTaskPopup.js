@@ -79,6 +79,7 @@ const AddTaskPopup = ({ show, handleClose, newTask, dispatch }) => {
   };
 
   const projectElements = myProjects.map((project) => {
+    console.log(project);
     return (
       <Dropdown.Item key={project.id} onClick={() => changeProject(project)}>
         {project.title}

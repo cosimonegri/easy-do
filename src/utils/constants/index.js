@@ -2,6 +2,7 @@ export const grey1 = "#F6F8FA";
 export const grey2 = "#D8E2EB";
 export const grey3 = "#BEC1CC";
 export const grey4 = "#373737";
+export const blue = "#6247F5";
 
 export const colorsList = [
   { id: "1", name: "Berry Red", color: "#B8255F" },

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import Header from "layouts/Header";
-import Sidebar from "layouts/Sidebar";
+import TopBar from "layouts/TopBar";
+import SideBar from "layouts/SideBar";
 
 import styles from "layouts/Main/main.module.css";
 
 export const Main = ({ children }) => {
   return (
     <>
-      <Header />
-      <Sidebar />
+      <TopBar />
+      <SideBar />
 
       <div id={styles.main}>{children}</div>
     </>

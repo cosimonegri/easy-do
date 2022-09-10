@@ -63,15 +63,19 @@ const AddProjectPopup = ({
 
         <Row className="mt-3 d-flex align-items-center">
           <Col
-            xs={{ span: 2, offset: 6 }}
-            className="p-0 d-flex justify-content-end"
+            xs={{ span: 2, offset: 7 }}
+            className="d-flex justify-content-end"
           >
-            <Button variant="outline-secondary" onClick={handleClose}>
+            <Button variant="outline-primary" onClick={handleClose}>
               Close
             </Button>
           </Col>
 
-          <Col xs={4} className="p-0 pr-2 d-flex justify-content-end">
+          <Col
+            xs={3}
+            className="d-flex justify-content-end"
+            style={{ paddingLeft: 0 }}
+          >
             <Button
               variant="primary"
               disabled={!isTitleValid()}

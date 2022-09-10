@@ -15,6 +15,7 @@ export const taskFromTemplate = (taskData, currentUserId) => {
     title: taskData.title,
     userId: currentUserId,
     projectId: taskData.projectId,
+    projectTitle: taskData.projectTitle,
     dueDate: taskData.dueDate,
     completed: taskData.completed,
     createdAt: serverTimestamp(),

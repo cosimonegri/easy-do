@@ -14,9 +14,9 @@ import folderIcon from "images/folder.png";
 import folderBlueIcon from "images/folder-blue.png";
 
 import { grey2, grey4 } from "utils/constants";
-import styles from "layouts/Sidebar/sidebar.module.css";
+import styles from "layouts/SideBar/sidebar.module.css";
 
-export const Sidebar = () => {
+export const SideBar = () => {
   const { currentUser } = useAuth(); // to write project list
   const iconSize = 24;
 
@@ -36,7 +36,7 @@ export const Sidebar = () => {
     document.getElementById(tooltip).style.visibility = "hidden";
   };
 
-  const sidebarElements = pages.map(([page, icon, blueIcon], index) => {
+  const sideBarElements = pages.map(([page, icon, blueIcon], index) => {
     let url = page === "home" ? "/app" : "/app/" + page;
     let id = "tooltip" + index;
     return (
@@ -67,7 +67,7 @@ export const Sidebar = () => {
   return (
     <nav id={styles["sidebar-outer"]}>
       <div id={styles["sidebar-inner"]} style={{ backgroundColor: "white" }}>
-        {sidebarElements}
+        {sideBarElements}
       </div>
       <div id={styles.divider} style={{ backgroundColor: grey2 }}></div>
     </nav>

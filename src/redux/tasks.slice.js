@@ -66,6 +66,9 @@ export const tasksSlice = createSlice({
     setTasks: (state, action) => {
       state.tasks = action.payload;
     },
+    clearTask: (state) => {
+      state.newTask = getInitialTask();
+    },
     setTaskTitle: (state, action) => {
       state.newTask.title = action.payload;
     },
@@ -81,11 +84,9 @@ export const tasksSlice = createSlice({
 
   extraReducers: (builder) => {
     builder.addCase(addTask.fulfilled, (state, action) => {
-      state.newTask = getInitialTask(); //! forse va chiamato nel programma (prima di aggiugnere) e non dopo
       console.log(`Added task ${action.payload}`);
     });
     builder.addCase(addTask.rejected, (state, action) => {
-      state.newTask = getInitialTask(); //! forse va chiamato nel programma (prima di aggiugnere) e non dopo
       console.log("Could not add task.");
       console.log(action.error.message);
     });

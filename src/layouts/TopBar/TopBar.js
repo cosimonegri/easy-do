@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/auth-context";
+
+import { clearTask } from "redux/tasks.slice";
+import { clearProject } from "redux/projects.slice";
 
 import AddTaskPopup from "components/AddTaskPopup";
 import AddProjectPopup from "components/AddProjectPopup";
@@ -11,14 +15,15 @@ import { grey1, grey2 } from "utils/constants";
 import styles from "layouts/TopBar/topbar.module.css";
 
 export const TopBar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
   const [showAddTaskPopup, setShowAddTaskPopup] = useState(false);
   const [showAddProjectPopup, setShowAddProjectPopup] = useState(false);
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [error, setError] = useState(""); //! make toast
-
-  const { logout } = useAuth();
-  const navigate = useNavigate();
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -33,6 +38,16 @@ export const TopBar = () => {
       console.log("failed to log out");
       setIsLoggingOut(false);
     }
+  };
+
+  const openAddTaskPopup = () => {
+    dispatch(clearTask());
+    setShowAddTaskPopup(true);
+  };
+
+  const openAddProjectPopup = () => {
+    dispatch(clearProject());
+    setShowAddProjectPopup(true);
   };
 
   return (
@@ -50,13 +65,10 @@ export const TopBar = () => {
       <header id={styles["header-outer"]}>
         <div id={styles["header-inner"]} style={{ backgroundColor: grey1 }}>
           <span id={styles["left-header"]}>
-            <AddButton
-              text={"Add Task"}
-              onClickFunction={() => setShowAddTaskPopup(true)}
-            />
+            <AddButton text={"Add Task"} onClickFunction={openAddTaskPopup} />
             <AddButton
               text={"Add Project"}
-              onClickFunction={() => setShowAddProjectPopup(true)}
+              onClickFunction={openAddProjectPopup}
             />
           </span>
 

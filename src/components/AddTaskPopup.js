@@ -47,7 +47,7 @@ const AddTaskPopup = ({ show, handleClose }) => {
   };
 
   const isTaskValid = () => {
-    return newTask.dueDate && newTask.title.length <= 200;
+    return newTask.dueDate && newTask.title && newTask.title.length <= 200;
   };
 
   const handleSubmitTask = (event) => {

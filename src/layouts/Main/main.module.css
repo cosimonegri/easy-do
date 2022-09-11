@@ -5,8 +5,9 @@
   overflow: auto;
   top: var(--headerHeight);
   left: var(--sidebarWidth);
-  width: calc(100% - var(--sidebarWidth));
   height: calc(100% - var(--headerHeight));
+  width: calc(100% - var(--sidebarWidth));
+  min-width: calc(var(--minContentWidth) + 2 * var(--sideSpace));
   margin: 0;
-  padding: 40px 60px;
+  padding: 40px var(--sideSpace);
 }

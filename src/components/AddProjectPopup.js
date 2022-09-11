@@ -16,7 +16,7 @@ const AddProjectPopup = ({ show, handleClose }) => {
   };
 
   const isProjectValid = () => {
-    return newProject.title.length <= 60;
+    return newProject.title && newProject.title.length <= 60;
   };
 
   const handleSubmitProject = (event) => {

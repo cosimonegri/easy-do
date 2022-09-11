@@ -10,26 +10,6 @@ export const userDataFromTemplate = (currentUser) => {
   };
 };
 
-export const taskFromTemplate = (taskData, currentUserId) => {
-  return {
-    title: taskData.title,
-    userId: currentUserId,
-    projectId: taskData.projectId,
-    projectTitle: taskData.projectTitle,
-    dueDate: taskData.dueDate,
-    completed: taskData.completed,
-    createdAt: serverTimestamp(),
-  };
-};
-
-export const projectFromTemplate = (title, currentUserId) => {
-  return {
-    title: title,
-    userId: currentUserId,
-    createdAt: serverTimestamp(),
-  };
-};
-
 export const invitationFromTemplate = (projectId, fromUserId, toUserEmail) => {
   return {
     projectId: projectId,

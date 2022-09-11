@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "contexts/auth-context";
+import React from "react";
+
+import PageButton from "layouts/SideBar/PageButton";
 
 import homeIcon from "images/home.png";
 import homeBlueIcon from "images/home-blue.png";
@@ -13,14 +13,11 @@ import upcomingBlueIcon from "images/upcoming-blue.png";
 import folderIcon from "images/folder.png";
 import folderBlueIcon from "images/folder-blue.png";
 
-import { grey2, grey4 } from "utils/constants";
+import { grey2 } from "utils/constants";
 import styles from "layouts/SideBar/sidebar.module.css";
 
 export const SideBar = () => {
-  const { currentUser } = useAuth(); // to write project list
-  const iconSize = 24;
-
-  const pages = [
+  const pageButtonsData = [
     ["home", homeIcon, homeBlueIcon],
     ["today", clockIcon, clockBlueIcon],
     ["tomorrow", tomorrowIcon, tomorrowBlueIcon],
@@ -28,47 +25,36 @@ export const SideBar = () => {
     ["projects", folderIcon, folderBlueIcon],
   ];
 
-  const show = (tooltip) => {
-    document.getElementById(tooltip).style.visibility = "visible";
+  const showTooltip = (tooltipId) => {
+    document.getElementById(tooltipId).style.visibility = "visible";
   };
 
-  const hide = (tooltip) => {
-    document.getElementById(tooltip).style.visibility = "hidden";
+  const hideTooltip = (tooltipId) => {
+    document.getElementById(tooltipId).style.visibility = "hidden";
   };
 
-  const sideBarElements = pages.map(([page, icon, blueIcon], index) => {
-    let url = page === "home" ? "/app" : "/app/" + page;
-    let id = "tooltip" + index;
-    return (
-      <div key={index} className={styles["element-outer"]}>
-        <Link
-          to={url}
-          className={styles["element-clickable"]}
-          onMouseOver={() => show(id)}
-          onMouseOut={() => hide(id)}
-        >
-          {window.location.pathname === url ? (
-            <img src={blueIcon} width={iconSize} height={iconSize} alt="" />
-          ) : (
-            <img src={icon} width={iconSize} height={iconSize} alt="" />
-          )}
-        </Link>
-        <small
-          id={id}
-          className={styles.tooltip}
-          style={{ backgroundColor: grey4 }}
-        >
-          {page.charAt(0).toUpperCase() + page.slice(1)}
-        </small>
-      </div>
-    );
-  });
+  const pageButtons = pageButtonsData.map(
+    ([pageName, icon, blueIcon], index) => {
+      return (
+        <PageButton
+          key={index}
+          index={index}
+          pageName={pageName}
+          icon={icon}
+          blueIcon={blueIcon}
+          showTooltip={showTooltip}
+          hideTooltip={hideTooltip}
+        />
+      );
+    }
+  );
 
   return (
     <nav id={styles["sidebar-outer"]}>
       <div id={styles["sidebar-inner"]} style={{ backgroundColor: "white" }}>
-        {sideBarElements}
+        {pageButtons}
       </div>
+
       <div id={styles.divider} style={{ backgroundColor: grey2 }}></div>
     </nav>
   );

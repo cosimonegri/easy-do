@@ -72,6 +72,9 @@ export const projectsSlice = createSlice({
     setProjects: (state, action) => {
       state.projects = action.payload;
     },
+    clearProject: (state) => {
+      state.newProject = getInitialProject();
+    },
     setProjectTitle: (state, action) => {
       state.newProject.title = action.payload;
     },
@@ -79,11 +82,9 @@ export const projectsSlice = createSlice({
 
   extraReducers: (builder) => {
     builder.addCase(addProject.fulfilled, (state, action) => {
-      state.newProject = getInitialProject();
       console.log(`Added project ${action.payload}`);
     });
     builder.addCase(addProject.rejected, (state, action) => {
-      state.newProject = getInitialProject();
       console.log("Could not add project.");
       console.log(action.error.message);
     });
@@ -97,6 +98,7 @@ export const projectsSlice = createSlice({
   },
 });
 
-export const { setProjects, setProjectTitle } = projectsSlice.actions;
+export const { setProjects, clearProject, setProjectTitle } =
+  projectsSlice.actions;
 
 export default projectsSlice.reducer;

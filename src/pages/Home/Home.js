@@ -1,21 +1,20 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 import Task from "components/Task";
 import Main from "layouts/Main";
-import { useData } from "contexts/data-context";
-
 import styles from "pages/Home/home.module.css";
 
 export const Home = () => {
-  const { myTasks, sharedTasks, deleteTask } = useData();
+  const tasks = useSelector((state) => state.tasks.tasks);
 
-  const handleDeleteTask = (taskId) => {
-    deleteTask(taskId); // errors handles in the function
-  };
-
-  let taskElements = [...myTasks, ...sharedTasks].map((task) => {
+  let taskElements = tasks.map((task) => {
     return <Task task={task} key={task.id} />;
   });
+
+  // let taskElements = [...myTasks, ...sharedTasks].map((task) => {
+  //   return <Task task={task} key={task.id} />;
+  // });
 
   return (
     <Main>

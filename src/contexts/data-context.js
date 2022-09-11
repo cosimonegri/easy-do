@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useReducer } from "react";
+import { useDispatch } from "react-redux";
 import {
   collection,
   collectionGroup,
@@ -13,14 +14,15 @@ import {
   enableIndexedDbPersistence,
 } from "firebase/firestore";
 
+import { setTasks } from "redux/tasks.slice";
+import { setProjects } from "redux/projects.slice";
+
 import { db } from "utils/firebase";
 import { useAuth } from "contexts/auth-context";
 import { LoadingScreen } from "layouts/LoadingScreen";
 
 import {
   userDataFromTemplate,
-  taskFromTemplate,
-  projectFromTemplate,
   invitationFromTemplate,
   membershipFromTemplate,
   getDbPath,
@@ -33,7 +35,8 @@ const useData = () => {
 };
 
 const DataProvider = ({ children }) => {
-  const [myTasks, setMyTasks] = useState([]);
+  const newDispatch = useDispatch();
+
   const [sharedTasks, setSharedTasks] = useState([]);
   const [myProjects, setMyProjects] = useState([]);
   const [memberships, setMemberships] = useState([]);
@@ -61,39 +64,6 @@ const DataProvider = ({ children }) => {
   const [isDownloading, dispatch] = useReducer(reducer, initialIsDownloading);
   const [hasSavedUserData, setHasSavedUserData] = useState(false);
   const { currentUser } = useAuth();
-
-  const addTask = (taskData) => {
-    const newTask = taskFromTemplate(taskData, currentUser.uid);
-    const path = getDbPath("tasks");
-    return addDoc(collection(db, path), newTask);
-  };
-
-  const deleteTask = (taskId) => {
-    const path = getDbPath("tasks", taskId);
-    return deleteDoc(doc(db, path));
-  };
-
-  const deleteTasksOfProject = async (projectId) => {
-    const tasksToDelete = query(
-      collection(db, "tasks"),
-      where("projectId", "==", projectId)
-    );
-    const snapshot = await getDocs(tasksToDelete);
-    snapshot.forEach((doc) => {
-      deleteDoc(doc.ref);
-    });
-  };
-
-  const addProject = (title) => {
-    const newProject = projectFromTemplate(title, currentUser.uid);
-    const path = getDbPath("projects");
-    return addDoc(collection(db, path), newProject);
-  };
-
-  const deleteProject = (projectId) => {
-    const path = getDbPath("projects", projectId);
-    return deleteDoc(doc(db, path));
-  };
 
   const addInvitation = (projectId, toUserEmail) => {
     const newInvitation = invitationFromTemplate(
@@ -201,18 +171,18 @@ const DataProvider = ({ children }) => {
       const unsubscribe = onSnapshot(
         tasksQuery,
         (snapshot) => {
-          setMyTasks(
-            snapshot.docs.map((doc) => {
-              return { ...doc.data(), id: doc.id };
-            })
-          );
+          const temp_tasks = snapshot.docs.map((doc) => {
+            return { ...doc.data(), id: doc.id };
+          });
+          newDispatch(setTasks(temp_tasks));
         },
         (error) => {
-          handleSnapshotError("myTasks");
+          handleSnapshotError("myTasks"); //!
         }
       );
 
       console.log("Got my tasks");
+
       dispatch({ type: "endDownload", payload: "myTasks" });
       return unsubscribe;
     }
@@ -231,14 +201,13 @@ const DataProvider = ({ children }) => {
       const unsubscribe = onSnapshot(
         projectsQuery,
         (snapshot) => {
-          setMyProjects(
-            snapshot.docs.map((doc) => {
-              return { ...doc.data(), id: doc.id };
-            })
-          );
+          const temp_projects = snapshot.docs.map((doc) => {
+            return { ...doc.data(), id: doc.id };
+          });
+          newDispatch(setProjects(temp_projects));
         },
         (error) => {
-          handleSnapshotError("myProjects");
+          handleSnapshotError("myProjects"); //!
         }
       );
 
@@ -355,16 +324,10 @@ const DataProvider = ({ children }) => {
   }, [currentUser, memberships, myProjects]);
 
   const value = {
-    myTasks,
     sharedTasks,
     myProjects,
     memberships,
     invitations,
-    addTask,
-    deleteTask,
-    deleteTasksOfProject,
-    addProject,
-    deleteProject,
     addInvitation,
     deleteInvitation,
     deleteInvitationsOfProject,

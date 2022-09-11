@@ -24,6 +24,8 @@ import "react-datepicker/dist/react-datepicker.css";
 // HELPERS: sistemare drag and drop progetti
 // HEADER: handle errors in the logout process
 
+// impedire creazione 2 progetti con stesso nome
+
 const App = () => {
   document.body.style.backgroundColor = grey1;
 

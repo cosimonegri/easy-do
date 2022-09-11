@@ -1,4 +1,6 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import DatePicker from "react-datepicker";
 import {
   Modal,
@@ -10,10 +12,19 @@ import {
   DropdownButton,
 } from "react-bootstrap";
 
-import { useData } from "contexts/data-context";
+import {
+  addTask,
+  setTaskTitle,
+  setTaskDueDate,
+  setTaskProject,
+} from "redux/tasks.slice";
+import { useAuth } from "contexts/auth-context";
 
-const AddTaskPopup = ({ show, handleClose, newTask, dispatch }) => {
-  const { addTask, myProjects } = useData();
+const AddTaskPopup = ({ show, handleClose }) => {
+  const dispatch = useDispatch();
+  const newTask = useSelector((state) => state.tasks.newTask);
+  const projects = useSelector((state) => state.projects.projects);
+  const { currentUser } = useAuth();
 
   const getDateOneYearForward = () => {
     let date = new Date();
@@ -22,50 +33,27 @@ const AddTaskPopup = ({ show, handleClose, newTask, dispatch }) => {
   };
 
   const changeTitle = (event) => {
-    dispatch({
-      type: "update",
-      payload: { key: "title", value: event.target.value },
-    });
+    dispatch(setTaskTitle(event.target.value));
   };
-
   const changeProject = (project) => {
-    dispatch({
-      type: "update",
-      payload: { key: "projectId", value: project.id },
-    });
-    dispatch({
-      type: "update",
-      payload: { key: "projectTitle", value: project.title },
-    });
+    if (project) {
+      dispatch(setTaskProject(project));
+    } else {
+      dispatch(setTaskProject({ id: "", title: "" }));
+    }
   };
-
-  const setNoProject = () => {
-    let project = { id: "", title: "" };
-    changeProject(project);
-  };
-
   const changeDueDate = (date) => {
-    dispatch({
-      type: "update",
-      payload: { key: "dueDate", value: date },
-    });
+    dispatch(setTaskDueDate(date));
   };
 
   const isTaskValid = () => {
-    return newTask.dueDate && newTask.title && newTask.title.length <= 200;
+    return newTask.dueDate && newTask.title.length <= 200;
   };
 
-  const handleSubmitTask = async (event) => {
+  const handleSubmitTask = (event) => {
     event.preventDefault();
+    dispatch(addTask(currentUser.uid));
     handleClose();
-
-    try {
-      const docRef = await addTask(newTask);
-      console.log(`Task added with id ${docRef.id}`);
-    } catch (error) {
-      console.log("Could not add task.");
-      console.log(error);
-    }
   };
 
   const handleSubmitWithEnter = (event) => {
@@ -78,15 +66,13 @@ const AddTaskPopup = ({ show, handleClose, newTask, dispatch }) => {
     }
   };
 
-  const projectElements = myProjects.map((project) => {
-    console.log(project);
+  const projectElements = projects.map((project) => {
     return (
       <Dropdown.Item key={project.id} onClick={() => changeProject(project)}>
         {project.title}
       </Dropdown.Item>
     );
   });
-
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Body>
@@ -105,7 +91,6 @@ const AddTaskPopup = ({ show, handleClose, newTask, dispatch }) => {
             />
           </Form.Group>
         </Form>
-
         <Row>
           <Col>
             <DropdownButton
@@ -119,13 +104,14 @@ const AddTaskPopup = ({ show, handleClose, newTask, dispatch }) => {
               size="sm"
               drop="start"
             >
-              <Dropdown.Item onClick={setNoProject}>No Project</Dropdown.Item>
+              <Dropdown.Item onClick={() => changeProject(null)}>
+                No Project
+              </Dropdown.Item>
               <Dropdown.Divider />
               {projectElements}
             </DropdownButton>
           </Col>
         </Row>
-
         <Row className="mt-3 d-flex align-items-center">
           <Col xs={7}>
             <DatePicker
@@ -138,13 +124,11 @@ const AddTaskPopup = ({ show, handleClose, newTask, dispatch }) => {
               calendarStartDay={1}
             />
           </Col>
-
           <Col xs={2} className="p-0 d-flex justify-content-end">
             <Button variant="outline-secondary" onClick={handleClose}>
               Close
             </Button>
           </Col>
-
           <Col xs={3} className="d-flex justify-content-end">
             <Button
               variant="primary"

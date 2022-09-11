@@ -1,7 +1,7 @@
-.add-button {
+#logout-button {
   border: none;
   border-radius: 5px;
-  padding: 6px 12px 6px 18px;
+  padding: 6px 18px 6px 18px;
   font-size: 14px;
   font-weight: bold;
 }
@@ -10,8 +10,4 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.icon {
-  margin-left: 3px;
 }

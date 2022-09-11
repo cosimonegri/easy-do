@@ -1,42 +1,35 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import { Modal, Form, Row, Col, Button } from "react-bootstrap";
 
-import { useData } from "contexts/data-context";
+import { addProject, setProjectTitle } from "redux/projects.slice";
+import { useAuth } from "contexts/auth-context";
 
-const AddProjectPopup = ({
-  show,
-  handleClose,
-  newProjectTitle,
-  setNewProjectTitle,
-}) => {
-  const { addProject } = useData(); //! impedire creazione 2 progetti con stesso nome
+const AddProjectPopup = ({ show, handleClose }) => {
+  const dispatch = useDispatch();
+  const newProject = useSelector((state) => state.projects.newProject);
+  const { currentUser } = useAuth();
 
   const changeTitle = (event) => {
-    setNewProjectTitle(event.target.value);
+    dispatch(setProjectTitle(event.target.value));
   };
 
-  const isTitleValid = () => {
-    return newProjectTitle && newProjectTitle.length <= 60;
+  const isProjectValid = () => {
+    return newProject.title.length <= 60;
   };
 
-  const handleSubmitProject = async (event) => {
+  const handleSubmitProject = (event) => {
     event.preventDefault();
+    dispatch(addProject(currentUser.uid));
     handleClose();
-
-    try {
-      const docRef = await addProject(newProjectTitle);
-      console.log(`Project added with id ${docRef.id}`);
-    } catch (error) {
-      console.log("Could not add project.");
-      console.log(error);
-    }
   };
 
   const handleSubmitWithEnter = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
 
-      if (isTitleValid()) {
+      if (isProjectValid()) {
         handleSubmitProject(event);
       }
     }
@@ -50,7 +43,7 @@ const AddProjectPopup = ({
             <Form.Control
               as="textarea"
               type="text"
-              value={newProjectTitle}
+              value={newProject.title}
               onChange={changeTitle}
               onKeyPress={handleSubmitWithEnter}
               placeholder="Project name"
@@ -78,7 +71,7 @@ const AddProjectPopup = ({
           >
             <Button
               variant="primary"
-              disabled={!isTitleValid()}
+              disabled={!isProjectValid()}
               onClick={handleSubmitProject}
             >
               Add Project

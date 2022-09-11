@@ -9,10 +9,10 @@ const iconSize = 20;
 const AddButton = ({ text, onClickFunction }) => {
   return (
     <button
+      className={styles["add-button"]}
+      style={{ backgroundColor: blue, color: grey1 }}
       type="button"
       onClick={onClickFunction}
-      className={styles.addbutton}
-      style={{ backgroundColor: blue, color: grey1 }}
     >
       <span className={styles.content}>
         {text}

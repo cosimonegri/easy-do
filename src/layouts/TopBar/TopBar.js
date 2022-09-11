@@ -1,51 +1,26 @@
-import React, { useState, useReducer } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/auth-context";
 
-import ProfileButton from "layouts/TopBar/ProfileButton";
-import AddButton from "layouts/TopBar/AddButton";
 import AddTaskPopup from "components/AddTaskPopup";
 import AddProjectPopup from "components/AddProjectPopup";
+import AddButton from "layouts/TopBar/AddButton";
+import LogoutButton from "layouts/TopBar/LogoutButton";
 
 import { grey1, grey2 } from "utils/constants";
 import styles from "layouts/TopBar/topbar.module.css";
 
-const initialTask = {
-  title: "",
-  projectId: "",
-  projectTitle: "",
-  dueDate: new Date(),
-  completed: false,
-};
-
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case "update":
-      return {
-        ...state,
-        [payload.key]: payload.value,
-      };
-    case "clear":
-      return { ...initialTask };
-    default:
-      throw new Error(`Unknown action type: ${type}`);
-  }
-};
-
 export const TopBar = () => {
-  const [newTask, dispatch] = useReducer(reducer, initialTask);
-  const [newProjectTitle, setNewProjectTitle] = useState("");
-
   const [showAddTaskPopup, setShowAddTaskPopup] = useState(false);
   const [showAddProjectPopup, setShowAddProjectPopup] = useState(false);
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); //! make toast
 
-  const { currentUser, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogOut = async (e) => {
+  const handleLogout = async (e) => {
     e.preventDefault();
     setError("");
     setIsLoggingOut(true);
@@ -60,38 +35,16 @@ export const TopBar = () => {
     }
   };
 
-  const handleAddTaskPopupOpen = () => {
-    dispatch({ type: "clear" });
-    setShowAddTaskPopup(true);
-  };
-
-  const handleAddTaskPopupClose = () => {
-    setShowAddTaskPopup(false);
-  };
-
-  const handleAddProjectPopupOpen = () => {
-    setNewProjectTitle("");
-    setShowAddProjectPopup(true);
-  };
-
-  const handleAddProjectPopupClose = () => {
-    setShowAddProjectPopup(false);
-  };
-
   return (
     <>
       <AddTaskPopup
         show={showAddTaskPopup}
-        handleClose={handleAddTaskPopupClose}
-        newTask={newTask}
-        dispatch={dispatch}
+        handleClose={() => setShowAddTaskPopup(false)}
       />
 
       <AddProjectPopup
         show={showAddProjectPopup}
-        handleClose={handleAddProjectPopupClose}
-        newProjectTitle={newProjectTitle}
-        setNewProjectTitle={setNewProjectTitle}
+        handleClose={() => setShowAddProjectPopup(false)}
       />
 
       <header id={styles["header-outer"]}>
@@ -99,18 +52,17 @@ export const TopBar = () => {
           <span id={styles["left-header"]}>
             <AddButton
               text={"Add Task"}
-              onClickFunction={handleAddTaskPopupOpen}
+              onClickFunction={() => setShowAddTaskPopup(true)}
             />
             <AddButton
               text={"Add Project"}
-              onClickFunction={handleAddProjectPopupOpen}
+              onClickFunction={() => setShowAddProjectPopup(true)}
             />
           </span>
 
           <span id={styles["right-header"]}>
-            <ProfileButton
-              onClickFunction={handleLogOut}
-              currentUser={currentUser}
+            <LogoutButton
+              onClickFunction={handleLogout}
               isLoggingOut={isLoggingOut}
             />
           </span>

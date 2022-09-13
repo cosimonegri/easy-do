@@ -1,7 +1,6 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "contexts/auth-context";
-import { useData } from "contexts/data-context";
 
 import { RequireAuth } from "routes/RequireAuth";
 import { RequireLogout } from "routes/RequireLogout";
@@ -10,30 +9,29 @@ import Login from "pages/Login";
 import ForgotPassword from "pages/ForgotPassword";
 
 import Home from "pages/Home";
-import Today from "pages/Today";
-import Tomorrow from "pages/Tomorrow";
-import Upcoming from "pages/Upcoming";
+import Scheduled from "pages/Scheduled";
 import Projects from "pages/Projects";
-// import Project from "pages/Project";
+import ProjectPage from "pages/ProjectPage";
 import Error404 from "pages/Error404";
 
 export const RoutesList = () => {
-  const { projects, isRetrievingData } = useData();
+  const projects = useSelector((state) => state.projects.projects);
 
-  // const projectPages = projects.map((project) => {
-  //   return (
-  //     <Route
-  //       key={project["id"]}
-  //       path={"/app/project/" + project["id"]}
-  //       element={
-  //         <RequireAuth>
-  //           {" "}
-  //           <Project project={project} />{" "}
-  //         </RequireAuth>
-  //       }
-  //     />
-  //   );
-  // });
+  const getProjectPages = () => {
+    return projects.map((project) => {
+      return (
+        <Route
+          key={project.id}
+          path={"/app/project/" + project.id}
+          element={
+            <RequireAuth>
+              <ProjectPage project={project} />
+            </RequireAuth>
+          }
+        />
+      );
+    });
+  };
 
   return (
     <Routes>
@@ -63,7 +61,7 @@ export const RoutesList = () => {
         }
       />
       <Route
-        path="/app"
+        path="/app/home"
         element={
           <RequireAuth>
             <Home />
@@ -71,26 +69,10 @@ export const RoutesList = () => {
         }
       />
       <Route
-        path="/app/today"
+        path="/app/scheduled"
         element={
           <RequireAuth>
-            <Today />
-          </RequireAuth>
-        }
-      />
-      <Route
-        path="/app/tomorrow"
-        element={
-          <RequireAuth>
-            <Tomorrow />
-          </RequireAuth>
-        }
-      />
-      <Route
-        path="/app/upcoming"
-        element={
-          <RequireAuth>
-            <Upcoming />
+            <Scheduled />
           </RequireAuth>
         }
       />
@@ -103,7 +85,7 @@ export const RoutesList = () => {
         }
       />
 
-      {/* {projectPages} */}
+      {getProjectPages()}
 
       <Route path="*" element={<Error404 />} />
     </Routes>

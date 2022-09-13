@@ -43,6 +43,7 @@ const AddTaskPopup = ({ show, handleClose }) => {
     }
   };
   const changeDueDate = (date) => {
+    console.log(date);
     dispatch(setTaskDueDate(date));
   };
 

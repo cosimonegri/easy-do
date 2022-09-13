@@ -172,6 +172,7 @@ const DataProvider = ({ children }) => {
         tasksQuery,
         (snapshot) => {
           const temp_tasks = snapshot.docs.map((doc) => {
+            //! Ascoltare changes. Non aggiorno tutte le task ogni volta, ma aggiungo / levo quelle cambiate.
             return { ...doc.data(), id: doc.id };
           });
           newDispatch(setTasks(temp_tasks));

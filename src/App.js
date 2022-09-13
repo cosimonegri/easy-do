@@ -25,6 +25,7 @@ import "react-datepicker/dist/react-datepicker.css";
 // HEADER: handle errors in the logout process
 
 // impedire creazione 2 progetti con stesso nome
+// possibilità di creare task senza data
 
 const App = () => {
   document.body.style.backgroundColor = grey1;

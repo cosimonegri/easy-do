@@ -13,7 +13,7 @@ const PageButton = ({
   hideTooltip,
 }) => {
   const iconSize = 24;
-  const url = pageName === "home" ? "/app" : "/app/" + pageName;
+  const url = "/app/" + pageName;
   const tooltipId = "toltip" + index;
 
   const getCapitalizedString = (string) => {

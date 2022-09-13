@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "utils/firebase";
+import { sortTasksByDate } from "utils/helpers";
 
 const getInitialTask = () => {
   return {
@@ -64,6 +65,7 @@ export const tasksSlice = createSlice({
   initialState,
   reducers: {
     setTasks: (state, action) => {
+      sortTasksByDate(action.payload);
       state.tasks = action.payload;
     },
     clearTask: (state) => {

@@ -1,14 +1,21 @@
-#logout-button {
+.add-button {
   border: none;
   outline: none;
-  border-radius: 5px;
-  padding: 6px 18px 6px 18px;
+  padding: 6px 16px 6px 8px;
   font-size: 14px;
   font-weight: bold;
+  width: 100%;
+  height: 40px;
+  border-radius: 20px;
+  margin-bottom: 15px;
 }
 
 .content {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.icon {
+  margin-right: 1px;
 }

@@ -1,8 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import Project from "components/Project";
 import Main from "layouts/Main";
+import PageTitle from "components/PageTitle";
+import Project from "components/Project";
 import styles from "pages/Projects/projects.module.css";
 
 export const Projects = () => {
@@ -14,9 +15,7 @@ export const Projects = () => {
 
   return (
     <Main>
-      <div id={styles["page-header"]}>
-        <h1>Projects</h1>
-      </div>
+      <PageTitle title={"Projects"} />
       <div id={styles["page-content"]}>{projectElements}</div>
     </Main>
   );

@@ -43,3 +43,11 @@ export const getDbPath = (collectionName, documentName, parentProjectName) => {
 
   throw new Error("Invalid arguments.");
 };
+
+export const sortTasksByDate = (tasks) => {
+  tasks.sort((task1, task2) => {
+    const date1 = task1.dueDate.toDate();
+    const date2 = task2.dueDate.toDate();
+    return date1 === date2 ? 0 : date1 > date2 ? 1 : -1;
+  });
+};

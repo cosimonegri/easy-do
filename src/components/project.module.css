@@ -12,9 +12,17 @@
 .left-content {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .right-content {
   display: flex;
   align-items: center;
+}
+
+.text {
+  inline-size: calc(100% - 30px);
+  word-break: break-word;
+  padding-top: 2px;
+  padding-left: 7px;
 }

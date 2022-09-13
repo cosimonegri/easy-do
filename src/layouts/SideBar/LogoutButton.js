@@ -1,7 +1,7 @@
 import React from "react";
 
 import { blue, grey1 } from "utils/constants";
-import styles from "layouts/TopBar/logoutbutton.module.css";
+import styles from "layouts/SideBar/logoutbutton.module.css";
 
 const LogoutButton = ({ onClickFunction, isLoggingOut }) => {
   return (

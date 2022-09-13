@@ -8,8 +8,8 @@ import { clearProject } from "redux/projects.slice";
 
 import AddTaskPopup from "components/AddTaskPopup";
 import AddProjectPopup from "components/AddProjectPopup";
-import AddButton from "layouts/TopBar/AddButton";
-import LogoutButton from "layouts/TopBar/LogoutButton";
+import AddButton from "layouts/SideBar/AddButton";
+import LogoutButton from "layouts/SideBar/LogoutButton";
 
 import { grey1, grey2 } from "utils/constants";
 import styles from "layouts/TopBar/topbar.module.css";
@@ -27,14 +27,14 @@ export const TopBar = () => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
-    setError("");
+    // setError("");
     setIsLoggingOut(true);
 
     try {
       await logout();
       navigate("/login");
     } catch (error) {
-      setError("Failed to log out");
+      // setError("Failed to log out");
       console.log("failed to log out");
       setIsLoggingOut(false);
     }

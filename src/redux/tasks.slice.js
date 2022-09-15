@@ -83,6 +83,9 @@ export const tasksSlice = createSlice({
     setTaskUserId: (state, action) => {
       state.newTask.userId = action.payload;
     },
+    clearAllTasksWithProject: (state) => {
+      state.tasksWithProject = [];
+    },
   },
 
   extraReducers: (builder) => {
@@ -112,6 +115,7 @@ export const {
   setTaskDueDate,
   setTaskProject,
   setTaskUserId,
+  clearAllTasksWithProject,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

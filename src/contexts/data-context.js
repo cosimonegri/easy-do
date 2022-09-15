@@ -5,15 +5,17 @@ import {
   collectionGroup,
   doc,
   setDoc,
-  deleteDoc,
-  getDocs,
   query,
   where,
   onSnapshot,
   enableIndexedDbPersistence,
 } from "firebase/firestore";
 
-import { setTasksWithoutProject, setTasksWithProject } from "redux/tasks.slice";
+import {
+  setTasksWithoutProject,
+  setTasksWithProject,
+  clearAllTasksWithProject,
+} from "redux/tasks.slice";
 import { setProjects } from "redux/projects.slice";
 import { setMemberships } from "redux/memberships.slice";
 import { setInvitationsReceived } from "redux/invitations.slice";
@@ -128,7 +130,9 @@ const DataProvider = ({ children }) => {
 
   // LISTENER FOR TASKS WITH PROJECT
   useEffect(() => {
-    if (currentUser && (memberships.length > 0 || projects.length > 0)) {
+    if (currentUser && projects.length === 0 && memberships.length === 0) {
+      newDispatch(clearAllTasksWithProject());
+    } else if (currentUser) {
       dispatch({ type: "startDownload", payload: "sharedTasks" });
 
       const projectIds = [

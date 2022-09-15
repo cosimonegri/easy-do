@@ -48,9 +48,8 @@ export const deleteProject = createAsyncThunk(
   "projects/deleteProject",
   async (projectId) => {
     await deleteDoc(doc(db, `projects/${projectId}`));
-
     //! database.helper: deleteDocumentsInCollection
-    //! delete also memberships
+
     // Delete all the tasks of the project
     const tasksToDelete = query(
       collection(db, "tasks"),

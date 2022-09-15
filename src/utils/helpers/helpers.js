@@ -1,4 +1,5 @@
 import { serverTimestamp } from "firebase/firestore";
+import { TOAST_TIME } from "utils/constants";
 
 export const userDataFromTemplate = (currentUser) => {
   return {
@@ -7,15 +8,6 @@ export const userDataFromTemplate = (currentUser) => {
     emailVerified: currentUser.emailVerified,
     photoUrl: currentUser.photoURL,
     createdAt: currentUser.metadata.createdAt,
-  };
-};
-
-export const invitationFromTemplate = (projectId, fromUserId, toUserEmail) => {
-  return {
-    projectId: projectId,
-    fromUserId: fromUserId,
-    toUserEmail: toUserEmail,
-    createdAt: serverTimestamp(),
   };
 };
 
@@ -44,10 +36,16 @@ export const getDbPath = (collectionName, documentName, parentProjectName) => {
   throw new Error("Invalid arguments.");
 };
 
-export const sortTasksByDate = (tasks) => {
-  tasks.sort((task1, task2) => {
-    const date1 = task1.dueDate.toDate();
-    const date2 = task2.dueDate.toDate();
-    return date1 === date2 ? 0 : date1 > date2 ? 1 : -1;
-  });
+export const getToastStyle = () => {
+  return {
+    autoClose: TOAST_TIME,
+    position: "bottom-center",
+    theme: "colored",
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    pauseOnFocusLoss: false,
+  };
 };

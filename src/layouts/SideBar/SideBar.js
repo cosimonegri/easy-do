@@ -3,8 +3,8 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/auth-context";
 
-import { clearTask } from "redux/tasks.slice";
-import { clearProject } from "redux/projects.slice";
+import { clearTask, setTaskUserId } from "redux/tasks.slice";
+import { clearProject, setProjectUserId } from "redux/projects.slice";
 
 import AddTaskPopup from "components/AddTaskPopup";
 import AddProjectPopup from "components/AddProjectPopup";
@@ -18,6 +18,8 @@ import clockIcon from "images/clock.png";
 import clockBlueIcon from "images/clock-blue.png";
 import folderIcon from "images/folder.png";
 import folderBlueIcon from "images/folder-blue.png";
+import bellIcon from "images/bell.png";
+import bellBlueIcon from "images/bell-blue.png";
 
 import { grey2 } from "utils/constants";
 import styles from "layouts/SideBar/sidebar.module.css";
@@ -27,15 +29,28 @@ export const SideBar = () => {
     ["home", homeIcon, homeBlueIcon],
     ["scheduled", clockIcon, clockBlueIcon],
     ["projects", folderIcon, folderBlueIcon],
+    ["invitations", bellIcon, bellBlueIcon],
   ];
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { currentUser, logout } = useAuth();
 
   const [showAddTaskPopup, setShowAddTaskPopup] = useState(false);
   const [showAddProjectPopup, setShowAddProjectPopup] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const openAddTaskPopup = () => {
+    dispatch(clearTask());
+    dispatch(setTaskUserId(currentUser.uid));
+    setShowAddTaskPopup(true);
+  };
+
+  const openAddProjectPopup = () => {
+    dispatch(clearProject());
+    dispatch(setProjectUserId(currentUser.uid));
+    setShowAddProjectPopup(true);
+  };
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -50,16 +65,6 @@ export const SideBar = () => {
     }
   };
 
-  const openAddTaskPopup = () => {
-    dispatch(clearTask());
-    setShowAddTaskPopup(true);
-  };
-
-  const openAddProjectPopup = () => {
-    dispatch(clearProject());
-    setShowAddProjectPopup(true);
-  };
-
   const showTooltip = (tooltipId) => {
     document.getElementById(tooltipId).style.visibility = "visible";
   };
@@ -68,8 +73,8 @@ export const SideBar = () => {
     document.getElementById(tooltipId).style.visibility = "hidden";
   };
 
-  const pageButtons = pageButtonsData.map(
-    ([pageName, icon, blueIcon], index) => {
+  const getPageButtons = () => {
+    return pageButtonsData.map(([pageName, icon, blueIcon], index) => {
       return (
         <PageButton
           key={index}
@@ -81,8 +86,8 @@ export const SideBar = () => {
           hideTooltip={hideTooltip}
         />
       );
-    }
-  );
+    });
+  };
 
   return (
     <>
@@ -103,7 +108,7 @@ export const SideBar = () => {
             <AddButton text={"Project"} onClickFunction={openAddProjectPopup} />
           </span>
 
-          <nav id={styles["nav"]}>{pageButtons}</nav>
+          <nav id={styles["nav"]}>{getPageButtons()}</nav>
 
           <LogoutButton
             onClickFunction={handleLogout}

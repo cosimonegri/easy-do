@@ -1,0 +1,11 @@
+@import "utils/constants/index.css";
+
+.left-half {
+  width: calc(100% / 2);
+  padding-right: calc(var(--sideSpace) / 2);
+}
+
+.right-half {
+  width: calc(100% / 2);
+  padding-left: calc(var(--sideSpace) / 2);
+}

@@ -14,14 +14,14 @@ const DateHeader = ({ date }) => {
     const tomorrow = getTomorrowDate();
 
     const extraString = areDatesEqual(date, today)
-      ? "Today \u00B7"
+      ? "\u00B7 Today"
       : areDatesEqual(date, tomorrow)
-      ? "Tomorrow \u00B7"
+      ? "\u00B7 Tomorrow"
       : "";
 
     return `${date.getDate()} ${getMonthName(
       date
-    )} ${date.getFullYear()} \u00B7 ${extraString} ${getDayName(date)}`;
+    )} ${date.getFullYear()} \u00B7 ${getDayName(date)} ${extraString}`;
   };
 
   return <div>{getDateHeaderString()}</div>;

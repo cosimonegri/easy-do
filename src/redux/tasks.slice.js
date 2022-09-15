@@ -1,52 +1,46 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  rejectWithValue,
-} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   collection,
-  collectionGroup,
   doc,
   addDoc,
-  setDoc,
   deleteDoc,
-  getDocs,
   serverTimestamp,
 } from "firebase/firestore";
 
 import { db } from "utils/firebase";
-import { sortTasksByDate } from "utils/helpers";
+import { sortTasksByDate } from "utils/helpers/sort.helpers";
 
 const getInitialTask = () => {
+  // Document name = taskId
   return {
     title: "",
     dueDate: new Date(),
     completed: false,
     projectId: "",
     projectTitle: "",
-    userId: null,
+    userId: "",
     createdAt: null,
   };
 };
 
-const updateTask = (task, userId) => {
+const getFinalTask = (task) => {
   return {
     ...task,
-    userId: userId,
     createdAt: serverTimestamp(),
   };
 };
 
 const initialState = {
-  tasks: [],
+  tasksWithoutProject: [],
+  tasksWithProject: [],
   newTask: getInitialTask(),
 };
 
 export const addTask = createAsyncThunk(
   "tasks/addTask",
-  async (userId, thunkAPI) => {
+  async (_, thunkAPI) => {
     let newTask = thunkAPI.getState().tasks.newTask;
-    newTask = updateTask(newTask, userId);
+    newTask = getFinalTask(newTask);
     const docRef = await addDoc(collection(db, "tasks"), newTask);
     return docRef.id;
   }
@@ -64,9 +58,13 @@ export const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    setTasks: (state, action) => {
+    setTasksWithoutProject: (state, action) => {
       sortTasksByDate(action.payload);
-      state.tasks = action.payload;
+      state.tasksWithoutProject = action.payload;
+    },
+    setTasksWithProject: (state, action) => {
+      sortTasksByDate(action.payload);
+      state.tasksWithProject = action.payload;
     },
     clearTask: (state) => {
       state.newTask = getInitialTask();
@@ -82,13 +80,16 @@ export const tasksSlice = createSlice({
       state.newTask.projectId = id;
       state.newTask.projectTitle = title;
     },
+    setTaskUserId: (state, action) => {
+      state.newTask.userId = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
-    builder.addCase(addTask.fulfilled, (state, action) => {
+    builder.addCase(addTask.fulfilled, (_, action) => {
       console.log(`Added task ${action.payload}`);
     });
-    builder.addCase(addTask.rejected, (state, action) => {
+    builder.addCase(addTask.rejected, (_, action) => {
       console.log("Could not add task.");
       console.log(action.error.message);
     });
@@ -104,11 +105,13 @@ export const tasksSlice = createSlice({
 });
 
 export const {
-  setTasks,
+  setTasksWithoutProject,
+  setTasksWithProject,
   clearTask,
   setTaskTitle,
   setTaskDueDate,
   setTaskProject,
+  setTaskUserId,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

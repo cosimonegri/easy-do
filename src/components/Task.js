@@ -12,6 +12,7 @@ import {
   getTodayDate,
   getTomorrowDate,
   areDatesEqual,
+  isDateBefore,
   getMonthName,
 } from "utils/helpers/date.helpers";
 import styles from "components/task.module.css";
@@ -32,7 +33,9 @@ const Task = ({ task, dateInFooter }) => {
     const today = getTodayDate();
     const tomorrow = getTomorrowDate();
 
-    if (areDatesEqual(date, today)) {
+    if (isDateBefore(date, today)) {
+      return "Expired";
+    } else if (areDatesEqual(date, today)) {
       return "Today";
     } else if (areDatesEqual(date, tomorrow)) {
       return "Tomorrow";

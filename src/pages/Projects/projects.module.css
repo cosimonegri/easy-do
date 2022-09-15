@@ -1,8 +1,8 @@
-#page-header {
-  width: 100%;
+#wrapper {
+  display: flex;
 }
 
-#page-content {
+.page-content {
   width: 100%;
 }
 

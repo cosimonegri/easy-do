@@ -1,6 +1,5 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import DatePicker from "react-datepicker";
 import {
   Modal,
@@ -18,23 +17,23 @@ import {
   setTaskDueDate,
   setTaskProject,
 } from "redux/tasks.slice";
-import { useAuth } from "contexts/auth-context";
+
+import { isTaskValid } from "utils/helpers/valid.helpers";
+import { getOneYearForwardDate } from "utils/helpers/date.helpers";
 
 const AddTaskPopup = ({ show, handleClose }) => {
   const dispatch = useDispatch();
   const newTask = useSelector((state) => state.tasks.newTask);
   const projects = useSelector((state) => state.projects.projects);
-  const { currentUser } = useAuth();
-
-  const getDateOneYearForward = () => {
-    let date = new Date();
-    date.setFullYear(date.getFullYear() + 1);
-    return date;
-  };
 
   const changeTitle = (event) => {
     dispatch(setTaskTitle(event.target.value));
   };
+
+  const changeDueDate = (date) => {
+    dispatch(setTaskDueDate(date));
+  };
+
   const changeProject = (project) => {
     if (project) {
       dispatch(setTaskProject(project));
@@ -42,18 +41,10 @@ const AddTaskPopup = ({ show, handleClose }) => {
       dispatch(setTaskProject({ id: "", title: "" }));
     }
   };
-  const changeDueDate = (date) => {
-    console.log(date);
-    dispatch(setTaskDueDate(date));
-  };
-
-  const isTaskValid = () => {
-    return newTask.dueDate && newTask.title && newTask.title.length <= 200;
-  };
 
   const handleSubmitTask = (event) => {
     event.preventDefault();
-    dispatch(addTask(currentUser.uid));
+    dispatch(addTask());
     handleClose();
   };
 
@@ -61,7 +52,7 @@ const AddTaskPopup = ({ show, handleClose }) => {
     if (event.key === "Enter") {
       event.preventDefault();
 
-      if (isTaskValid()) {
+      if (isTaskValid(newTask)) {
         handleSubmitTask(event);
       }
     }
@@ -88,6 +79,7 @@ const AddTaskPopup = ({ show, handleClose }) => {
               placeholder="Task name"
               rows={3}
               autoFocus
+              spellCheck={false}
               style={{ resize: "none" }}
             />
           </Form.Group>
@@ -120,7 +112,7 @@ const AddTaskPopup = ({ show, handleClose }) => {
               onChange={changeDueDate}
               dateFormat="dd MMM yyyy"
               minDate={new Date()}
-              maxDate={getDateOneYearForward()}
+              maxDate={getOneYearForwardDate()}
               placeholderText="Select a date"
               calendarStartDay={1}
             />
@@ -133,7 +125,7 @@ const AddTaskPopup = ({ show, handleClose }) => {
           <Col xs={3} className="d-flex justify-content-end">
             <Button
               variant="primary"
-              disabled={!isTaskValid()}
+              disabled={!isTaskValid(newTask)}
               onClick={handleSubmitTask}
             >
               Add Task

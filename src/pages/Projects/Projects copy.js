@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-import Project from "components/Project";
+import SingleProject from "pages/Projects/SingleProject";
 import Main from "layouts/Main";
 import styles from "pages/Projects/projects.module.css";
 

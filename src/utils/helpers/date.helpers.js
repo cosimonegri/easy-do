@@ -5,9 +5,15 @@ export const getTodayDate = () => {
 };
 
 export const getTomorrowDate = () => {
-  const day = new Date();
-  day.setDate(day.getDate() + 1);
-  return day;
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return date;
+};
+
+export const getOneYearForwardDate = () => {
+  let date = new Date();
+  date.setFullYear(date.getFullYear() + 1);
+  return date;
 };
 
 export const getDayName = (date) => {

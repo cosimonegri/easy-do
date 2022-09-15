@@ -1,27 +1,22 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import { Modal, Form, Row, Col, Button } from "react-bootstrap";
 
 import { addProject, setProjectTitle } from "redux/projects.slice";
-import { useAuth } from "contexts/auth-context";
+
+import { isProjectValid } from "utils/helpers/valid.helpers";
 
 const AddProjectPopup = ({ show, handleClose }) => {
   const dispatch = useDispatch();
   const newProject = useSelector((state) => state.projects.newProject);
-  const { currentUser } = useAuth();
 
   const changeTitle = (event) => {
     dispatch(setProjectTitle(event.target.value));
   };
 
-  const isProjectValid = () => {
-    return newProject.title && newProject.title.length <= 60;
-  };
-
   const handleSubmitProject = (event) => {
     event.preventDefault();
-    dispatch(addProject(currentUser.uid));
+    dispatch(addProject());
     handleClose();
   };
 
@@ -29,7 +24,7 @@ const AddProjectPopup = ({ show, handleClose }) => {
     if (event.key === "Enter") {
       event.preventDefault();
 
-      if (isProjectValid()) {
+      if (isProjectValid(newProject)) {
         handleSubmitProject(event);
       }
     }
@@ -49,6 +44,7 @@ const AddProjectPopup = ({ show, handleClose }) => {
               placeholder="Project name"
               rows={3}
               autoFocus
+              spellCheck={false}
               style={{ resize: "none" }}
             />
           </Form.Group>
@@ -71,7 +67,7 @@ const AddProjectPopup = ({ show, handleClose }) => {
           >
             <Button
               variant="primary"
-              disabled={!isProjectValid()}
+              disabled={!isProjectValid(newProject)}
               onClick={handleSubmitProject}
             >
               Add Project

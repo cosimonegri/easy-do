@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useContext, useReducer } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   collection,
   collectionGroup,
   doc,
-  addDoc,
   setDoc,
   deleteDoc,
   getDocs,
@@ -14,19 +13,16 @@ import {
   enableIndexedDbPersistence,
 } from "firebase/firestore";
 
-import { setTasks } from "redux/tasks.slice";
+import { setTasksWithoutProject, setTasksWithProject } from "redux/tasks.slice";
 import { setProjects } from "redux/projects.slice";
+import { setMemberships } from "redux/memberships.slice";
+import { setInvitationsReceived } from "redux/invitations.slice";
 
 import { db } from "utils/firebase";
 import { useAuth } from "contexts/auth-context";
 import { LoadingScreen } from "layouts/LoadingScreen";
 
-import {
-  userDataFromTemplate,
-  invitationFromTemplate,
-  membershipFromTemplate,
-  getDbPath,
-} from "utils/helpers";
+import { userDataFromTemplate, getDbPath } from "utils/helpers/helpers";
 
 const DataContext = React.createContext();
 
@@ -36,11 +32,8 @@ const useData = () => {
 
 const DataProvider = ({ children }) => {
   const newDispatch = useDispatch();
-
-  const [sharedTasks, setSharedTasks] = useState([]);
-  const [myProjects, setMyProjects] = useState([]);
-  const [memberships, setMemberships] = useState([]);
-  const [invitations, setInvitations] = useState([]);
+  const projects = useSelector((state) => state.projects.projects);
+  const memberships = useSelector((state) => state.memberships.memberships);
 
   const initialIsDownloading = {
     myTasks: false,
@@ -65,46 +58,6 @@ const DataProvider = ({ children }) => {
   const [hasSavedUserData, setHasSavedUserData] = useState(false);
   const { currentUser } = useAuth();
 
-  const addInvitation = (projectId, toUserEmail) => {
-    const newInvitation = invitationFromTemplate(
-      projectId,
-      currentUser.uid,
-      toUserEmail
-    );
-    const path = getDbPath("invitations", toUserEmail, projectId);
-    return setDoc(doc(db, path), newInvitation);
-  };
-
-  const deleteInvitation = (projectId, toUserEmail) => {
-    const path = getDbPath("invitations", toUserEmail, projectId);
-    return deleteDoc(doc(db, path));
-  };
-
-  const deleteInvitationsOfProject = async (projectId) => {
-    const invitationsToDelete = query(
-      collection(db, "projects", projectId, "invitations")
-    );
-    const snapshot = await getDocs(invitationsToDelete);
-    snapshot.forEach((doc) => {
-      deleteDoc(doc.ref);
-    });
-  };
-
-  const addMembership = (projectId) => {
-    const newMembership = membershipFromTemplate(
-      projectId,
-      currentUser,
-      "member"
-    );
-    const path = getDbPath("memberships", currentUser.email, projectId);
-    return setDoc(doc(db, path), newMembership);
-  };
-
-  const deleteMembership = (projectId) => {
-    const path = getDbPath("memberships", currentUser.email, projectId);
-    return deleteDoc(doc(db, path));
-  };
-
   const deleteMembershipsOfProject = async (projectId) => {
     const membershipsToDelete = query(
       collection(db, "projects", projectId, "memberships")
@@ -113,10 +66,6 @@ const DataProvider = ({ children }) => {
     snapshot.forEach((doc) => {
       deleteDoc(doc.ref);
     });
-  };
-
-  const handleSnapshotError = (listenerName) => {
-    console.log(`Error in listener ${listenerName}`); //! Lanciare un errore?
   };
 
   // SET DATABASE PERSISTENCE
@@ -158,38 +107,76 @@ const DataProvider = ({ children }) => {
     }
   }, [currentUser]);
 
-  // LISTENER FOR MY TASKS
+  // LISTENER FOR TASKS WITHOUT PROJECT
   useEffect(() => {
     if (currentUser) {
       dispatch({ type: "startDownload", payload: "myTasks" });
 
       const tasksQuery = query(
         collection(db, "tasks"),
-        where("userId", "==", currentUser.uid)
+        where("userId", "==", currentUser.uid),
+        where("projectId", "==", "")
       );
 
       const unsubscribe = onSnapshot(
         tasksQuery,
         (snapshot) => {
-          const temp_tasks = snapshot.docs.map((doc) => {
-            //! Ascoltare changes. Non aggiorno tutte le task ogni volta, ma aggiungo / levo quelle cambiate.
+          const tasks = snapshot.docs.map((doc) => {
             return { ...doc.data(), id: doc.id };
           });
-          newDispatch(setTasks(temp_tasks));
+          newDispatch(setTasksWithoutProject(tasks));
         },
         (error) => {
-          handleSnapshotError("myTasks"); //!
+          console.log(error);
         }
       );
-
-      console.log("Got my tasks");
 
       dispatch({ type: "endDownload", payload: "myTasks" });
       return unsubscribe;
     }
   }, [currentUser]);
 
-  // LISTENER FOR MY PROJECTS
+  // LISTENER FOR TASKS WITH PROJECT
+  useEffect(() => {
+    if (currentUser && (memberships.length > 0 || projects.length > 0)) {
+      dispatch({ type: "startDownload", payload: "sharedTasks" });
+
+      const projectIds = [
+        ...projects.map((project) => {
+          return project.id;
+        }),
+        ...memberships.map((membership) => {
+          return membership.projectId;
+        }),
+      ];
+
+      console.log("aggiornato");
+
+      const tasksQuery = query(
+        collection(db, "tasks"),
+        where("projectId", "in", projectIds)
+      );
+
+      // SISTEMARE ERRORE
+      const unsubscribe = onSnapshot(
+        tasksQuery,
+        (snapshot) => {
+          const tasks = snapshot.docs.map((doc) => {
+            return { ...doc.data(), id: doc.id };
+          });
+          newDispatch(setTasksWithProject(tasks));
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+
+      dispatch({ type: "endDownload", payload: "sharedTasks" });
+      return unsubscribe;
+    }
+  }, [currentUser, projects, memberships]);
+
+  // PROJECTS LISTENER
   useEffect(() => {
     if (currentUser) {
       dispatch({ type: "startDownload", payload: "myProjects" });
@@ -202,23 +189,22 @@ const DataProvider = ({ children }) => {
       const unsubscribe = onSnapshot(
         projectsQuery,
         (snapshot) => {
-          const temp_projects = snapshot.docs.map((doc) => {
+          const projects = snapshot.docs.map((doc) => {
             return { ...doc.data(), id: doc.id };
           });
-          newDispatch(setProjects(temp_projects));
+          newDispatch(setProjects(projects));
         },
         (error) => {
-          handleSnapshotError("myProjects"); //!
+          console.log(error);
         }
       );
 
-      console.log("Got projects");
       dispatch({ type: "endDownload", payload: "myProjects" });
       return unsubscribe;
     }
   }, [currentUser]);
 
-  // LISTENER FOR MEMBERSHIPS
+  // MEMBERSHIPS LISTENER
   useEffect(() => {
     if (currentUser) {
       dispatch({ type: "startDownload", payload: "memberships" });
@@ -231,114 +217,51 @@ const DataProvider = ({ children }) => {
       const unsubscribe = onSnapshot(
         membershipsQuery,
         (snapshot) => {
-          setMemberships(
-            snapshot.docs.map((doc) => {
-              return { ...doc.data() };
-            })
-          );
+          const memberships = snapshot.docs.map((doc) => {
+            return { ...doc.data() };
+          });
+          newDispatch(setMemberships(memberships));
         },
         (error) => {
-          handleSnapshotError("memberships");
+          console.log(error);
         }
       );
 
-      console.log("Got memberships");
       dispatch({ type: "endDownload", payload: "memberships" });
       return unsubscribe;
     }
   }, [currentUser]);
 
-  // LISTENER FOR INVITATIONS
+  // INVITATIONS LISTENER
   useEffect(() => {
     if (currentUser) {
       dispatch({ type: "startDownload", payload: "invitations" });
 
       const invitationsQuery = query(
         collectionGroup(db, "invitations"),
-        where("toUserEmail", "==", currentUser.email)
+        where("toEmail", "==", currentUser.email)
       );
 
-      // YOU HAVE TO HANDLE ERRORS
       const unsubscribe = onSnapshot(
         invitationsQuery,
         (snapshot) => {
-          setInvitations(
-            snapshot.docs.map((doc) => {
-              return { ...doc.data() };
-            })
-          );
+          const invitations = snapshot.docs.map((doc) => {
+            return { ...doc.data() };
+          });
+          newDispatch(setInvitationsReceived(invitations));
         },
         (error) => {
-          handleSnapshotError("invitations");
+          console.log(error);
         }
       );
 
-      console.log("Got invitations");
       dispatch({ type: "endDownload", payload: "invitations" });
       return unsubscribe;
     }
   }, [currentUser]);
 
-  // LISTENER FOR TASKS (of other people in same projects)
-  useEffect(() => {
-    if (currentUser && (memberships.length > 0 || myProjects.length > 0)) {
-      dispatch({ type: "startDownload", payload: "sharedTasks" });
-
-      console.log(memberships);
-      console.log(myProjects);
-
-      const projectIds = [
-        ...memberships.map((membership) => {
-          return membership.projectId;
-        }),
-        ...myProjects.map((project) => {
-          return project.id;
-        }),
-      ];
-      console.log(projectIds);
-
-      const tasksQuery = query(
-        collection(db, "tasks"),
-        where("projectId", "in", projectIds),
-        where("userId", "!=", currentUser.uid)
-      );
-
-      // YOU HAVE TO HANDLE ERRORS
-      const unsubscribe = onSnapshot(
-        tasksQuery,
-        (snapshot) => {
-          setSharedTasks(
-            snapshot.docs.map((doc) => {
-              return { ...doc.data(), id: doc.id };
-            })
-          );
-        },
-        (error) => {
-          handleSnapshotError("sharedTasks");
-        }
-      );
-
-      console.log("Got shared tasks");
-      dispatch({ type: "endDownload", payload: "sharedTasks" });
-      return unsubscribe;
-    }
-  }, [currentUser, memberships, myProjects]);
-
-  const value = {
-    sharedTasks,
-    myProjects,
-    memberships,
-    invitations,
-    addInvitation,
-    deleteInvitation,
-    deleteInvitationsOfProject,
-    addMembership,
-    deleteMembership,
-    deleteMembershipsOfProject,
-  };
-
   return (
-    <DataContext.Provider value={value}>
+    <DataContext.Provider>
       {(!currentUser || hasSavedUserData) &&
       Object.values(isDownloading).every((item) => item === false) ? (
         children
@@ -351,7 +274,7 @@ const DataProvider = ({ children }) => {
 
 export { DataProvider, useData, DataContext };
 
-// ALTERNATIVE FOR QUERING TASKS //
+//! ALTERNATIVE FOR QUERING TASKS //
 // let queriedTasks = [];
 // unsubscribe = onSnapshot(tasksQuery, (querySnapshot) => {
 //   querySnapshot.docChanges().forEach((change) => {

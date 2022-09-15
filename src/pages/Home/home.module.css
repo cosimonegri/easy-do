@@ -4,16 +4,6 @@
   display: flex;
 }
 
-#left-section {
-  width: calc(100% / 2);
-  padding-right: calc(var(--sideSpace) / 2);
-}
-
-#right-section {
-  width: calc(100% / 2);
-  padding-left: calc(var(--sideSpace) / 2);
-}
-
 .page-content {
   width: 100%;
 }

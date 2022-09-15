@@ -16,14 +16,17 @@ import {
 import styles from "pages/Scheduled/scheduled.module.css";
 
 export const Scheduled = () => {
-  const tasks = useSelector((state) => state.tasks.tasks);
+  const tasksWithoutProject = useSelector(
+    (state) => state.tasks.tasksWithoutProject
+  );
+  const tasksWithProject = useSelector((state) => state.tasks.tasksWithProject);
 
   const getElements = () => {
     const elements = [];
     const today = getTodayDate();
     let lastDate = null;
 
-    for (let task of tasks) {
+    for (let task of tasksWithoutProject) {
       const taskDate = task.dueDate.toDate();
       const dateBefore = isDateBefore(taskDate, today);
 
@@ -41,6 +44,7 @@ export const Scheduled = () => {
 
       elements.push(<Task key={task.id} task={task} dateInFooter={false} />);
     }
+
     return elements;
   };
 

@@ -2,21 +2,59 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 import Main from "layouts/Main";
+import HalfPage from "layouts/HalfPage";
 import PageTitle from "components/PageTitle";
-import Project from "components/Project";
+import SingleProject from "pages/Projects/SingleProject";
+
 import styles from "pages/Projects/projects.module.css";
 
 export const Projects = () => {
   const projects = useSelector((state) => state.projects.projects);
+  const memberships = useSelector((state) => state.memberships.memberships);
 
-  let projectElements = projects.map((project) => {
-    return <Project project={project} key={project.id} />;
-  });
+  const getYourProjectElements = () => {
+    return projects.map((project) => {
+      return (
+        <SingleProject
+          key={project.id}
+          projectId={project.id}
+          projectTitle={project.title}
+          iAmOwner={true}
+        />
+      );
+    });
+  };
+
+  const getSharedProjectElements = () => {
+    return memberships.map((membership) => {
+      return (
+        <SingleProject
+          key={membership.projectId}
+          projectId={membership.projectId}
+          projectTitle={membership.projectTitle}
+          iAmOwner={false}
+        />
+      );
+    });
+  };
 
   return (
     <Main>
-      <PageTitle title={"Projects"} />
-      <div id={styles["page-content"]}>{projectElements}</div>
+      <div id={styles.wrapper}>
+        <HalfPage side={"left"}>
+          <PageTitle title={"Your Projects"} />
+          <div className={styles["page-content"]}>
+            {getYourProjectElements()}
+          </div>
+        </HalfPage>
+
+        <HalfPage side={"right"}>
+          <PageTitle title={"Shared Projects"} />
+          <div className={styles["page-content"]}>
+            {getSharedProjectElements()}
+          </div>
+        </HalfPage>
+      </div>
     </Main>
   );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 import Main from "layouts/Main";
+import HalfPage from "layouts/HalfPage";
 import PageTitle from "components/PageTitle";
 import Task from "components/Task";
 
@@ -14,53 +15,58 @@ import {
 import styles from "pages/Home/home.module.css";
 
 export const Home = () => {
-  //! remember to get also the shared tasks
-  const tasks = useSelector((state) => state.tasks.tasks);
+  const tasksWithoutProject = useSelector(
+    (state) => state.tasks.tasksWithoutProject
+  );
+  const tasksWithProject = useSelector((state) => state.tasks.tasksWithProject);
 
-  const getTodayTaskElements = () => {
+  const getTaskElementsWithDate = (date) => {
     const taskElements = [];
-    const today = getTodayDate();
 
-    for (let task of tasks) {
+    for (let task of tasksWithoutProject) {
       const taskDate = task.dueDate.toDate();
-      if (areDatesEqual(today, taskDate)) {
+      if (areDatesEqual(date, taskDate)) {
         taskElements.push(
           <Task key={task.id} task={task} dateInFooter={false} />
         );
       }
     }
+    for (let task of tasksWithProject) {
+      const taskDate = task.dueDate.toDate();
+      if (areDatesEqual(date, taskDate)) {
+        taskElements.push(
+          <Task key={task.id} task={task} dateInFooter={false} />
+        );
+      }
+    }
+
     return taskElements;
   };
 
-  const getTomorrowTaskElements = () => {
-    const taskElements = [];
-    const tomorrow = getTomorrowDate();
+  const getTodayTaskElements = () => {
+    const today = getTodayDate();
+    return getTaskElementsWithDate(today);
+  };
 
-    for (let task of tasks) {
-      const taskDate = task.dueDate.toDate();
-      if (areDatesEqual(tomorrow, taskDate)) {
-        taskElements.push(
-          <Task key={task.id} task={task} dateInFooter={false} />
-        );
-      }
-    }
-    return taskElements;
+  const getTomorrowTaskElements = () => {
+    const tomorrow = getTomorrowDate();
+    return getTaskElementsWithDate(tomorrow);
   };
 
   return (
     <Main>
       <div id={styles.wrapper}>
-        <div id={styles["left-section"]}>
+        <HalfPage side={"left"}>
           <PageTitle title={"Today"} footerDate={getTodayDate()} />
           <div className={styles["page-content"]}>{getTodayTaskElements()}</div>
-        </div>
+        </HalfPage>
 
-        <div id={styles["right-section"]}>
+        <HalfPage side={"right"}>
           <PageTitle title={"Tomorrow"} footerDate={getTomorrowDate()} />
           <div className={styles["page-content"]}>
             {getTomorrowTaskElements()}
           </div>
-        </div>
+        </HalfPage>
       </div>
     </Main>
   );

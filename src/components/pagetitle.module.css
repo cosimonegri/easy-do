@@ -1,0 +1,14 @@
+.wrapper {
+  width: 100%;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.footer {
+  font-size: 13px;
+  color: grey;
+  margin-left: 6px;
+}

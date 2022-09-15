@@ -82,10 +82,7 @@ export const Login = () => {
   };
 
   return (
-    <Container
-      className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh" }}
-    >
+    <Container className="min-vh-100 d-flex justify-content-center align-items-center">
       <div className="w-100" style={{ maxWidth: "400px" }}>
         <Card className="rounded p-2 pb-1 mt-3 mb-3">
           <Card.Body>

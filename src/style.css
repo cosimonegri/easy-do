@@ -16,5 +16,15 @@ img {
 }
 
 button {
-  cursor: pointer;
+  cursor: pointer !important;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
+input,
+textarea {
+  text-decoration: none !important;
 }

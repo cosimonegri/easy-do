@@ -1,0 +1,35 @@
+.task-container {
+  background-color: white;
+  margin: 10px 0;
+  padding: 8px 14px;
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.left-content {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  inline-size: calc(100% - 30px);
+  word-break: break-word;
+  padding-top: 2px;
+}
+
+.right-content {
+  display: flex;
+  align-items: center;
+}
+
+.main-part {
+  width: 100%;
+  font-size: 16px;
+}
+
+.footer-part {
+  width: 100%;
+  color: grey;
+  font-size: 13px;
+}

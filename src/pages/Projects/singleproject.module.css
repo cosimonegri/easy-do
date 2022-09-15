@@ -1,0 +1,28 @@
+.project-container {
+  background-color: white;
+  margin: 10px 0;
+  padding: 8px 14px;
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.left-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.right-content {
+  display: flex;
+  align-items: center;
+}
+
+.text {
+  inline-size: calc(100% - 30px);
+  word-break: break-word;
+  padding-top: 2px;
+  padding-left: 7px;
+}

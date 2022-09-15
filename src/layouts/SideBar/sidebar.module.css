@@ -1,0 +1,39 @@
+@import "utils/constants/index.css";
+
+#sidebar-outer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebarWidth);
+  height: 100%;
+  z-index: 100;
+}
+
+#sidebar-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--sidebarWidth) - 2px);
+  height: 100%;
+  padding: 30px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#nav {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  padding-bottom: 50px;
+}
+
+#divider {
+  position: absolute;
+  top: 0px;
+  left: calc(var(--sidebarWidth) - 2px);
+  width: 2px;
+  height: 100%;
+}

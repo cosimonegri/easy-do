@@ -8,6 +8,6 @@ export const RequireLogout = ({ children }) => {
   return !(currentUser && currentUser.emailVerified) ? (
     children
   ) : (
-    <Navigate to="/app" replace />
+    <Navigate to="/app/home" replace />
   );
 };

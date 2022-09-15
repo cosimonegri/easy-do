@@ -1,147 +1,82 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Popup } from "reactjs-popup";
-import { BsFillCircleFill } from "react-icons/bs";
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Modal, Form, Row, Col, Button } from "react-bootstrap";
 
-import { useAuth } from "contexts/auth-context";
-import { useData } from "contexts/data-context";
-// import { addProject } from "utils/helpers";
-import { colorsList, projectsColorMap } from "utils/constants";
+import { addProject, setProjectTitle } from "redux/projects.slice";
 
-export const AddProjectPopup = ({ close }) => {
-  const { currentUser } = useAuth();
-  const { projects, setProjects } = useData();
-  const [projectName, setProjectName] = useState("");
-  const [projectColor, setProjectColor] = useState("Charcoal");
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+import { isProjectValid } from "utils/helpers/valid.helpers";
 
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
-    setWindowHeight(window.innerHeight);
+const AddProjectPopup = ({ show, handleClose }) => {
+  const dispatch = useDispatch();
+  const newProject = useSelector((state) => state.projects.newProject);
+
+  const changeTitle = (event) => {
+    dispatch(setProjectTitle(event.target.value));
   };
 
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const handleSubmitProject = (e) => {
-    e.preventDefault();
-    // if (
-    //   projectName &&
-    //   !projects.map((project) => project["name"]).includes(projectName)
-    // ) {
-    //   addProject(
-    //     currentUser.uid,
-    //     projects,
-    //     setProjects,
-    //     projectName,
-    //     projectColor
-    //   );
-    // }
-    close();
+  const handleSubmitProject = (event) => {
+    event.preventDefault();
+    dispatch(addProject());
+    handleClose();
   };
 
-  const handleEnter = (e) => {
-    // when Enter pressed, not new line but submit
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSubmitProject(e);
+  const handleSubmitWithEnter = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+
+      if (isProjectValid(newProject)) {
+        handleSubmitProject(event);
+      }
     }
   };
 
   return (
-    <div className="add-project-popup-wrapper">
-      <header className="add-project-popup-header">
-        <h4 style={{ paddingLeft: "24px" }}>Add project</h4>
-      </header>
-      <hr className="add-project-popup-divider" style={{ top: "56px" }} />
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Body>
+        <Form>
+          <Form.Group className="mb-3" controlId="projectTitle">
+            <Form.Control
+              as="textarea"
+              type="text"
+              value={newProject.title}
+              onChange={changeTitle}
+              onKeyPress={handleSubmitWithEnter}
+              placeholder="Project name"
+              rows={3}
+              autoFocus
+              spellCheck={false}
+              style={{ resize: "none" }}
+            />
+          </Form.Group>
+        </Form>
 
-      <div className="add-project-popup-content">
-        <form autoComplete="off">
-          <p className="add-project-popup-label">Name</p>
-          <input
-            type="text"
-            className="add-project-popup-input"
-            id="projectName"
-            name="projectName"
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-            onKeyPress={handleEnter}
-            autoFocus
-          />
-          <p className="add-project-popup-label">Color</p>
-        </form>
+        <Row className="mt-3 d-flex align-items-center">
+          <Col
+            xs={{ span: 2, offset: 7 }}
+            className="d-flex justify-content-end"
+          >
+            <Button variant="outline-primary" onClick={handleClose}>
+              Close
+            </Button>
+          </Col>
 
-        <Popup
-          trigger={
-            <button type="button" className="add-project-popup-color-btn">
-              <BsFillCircleFill
-                size={10}
-                color={projectsColorMap[projectColor]}
-                style={{ marginRight: "10px", marginLeft: "6px" }}
-              />
-              {projectColor}
-            </button>
-          }
-          position={"bottom center"}
-          nested
-        >
-          {(close) => (
-            <ChooseColorPopup close={close} setProjectColor={setProjectColor} />
-          )}
-        </Popup>
-      </div>
-
-      <hr className="add-project-popup-divider" />
-      <div className="add-project-popup-footer">
-        <button
-          type="button"
-          className="add-project-popup-cancel-btn"
-          onClick={close}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="add-project-popup-submit-btn"
-          onClick={handleSubmitProject}
-        >
-          Add
-        </button>
-      </div>
-    </div>
+          <Col
+            xs={3}
+            className="d-flex justify-content-end"
+            style={{ paddingLeft: 0 }}
+          >
+            <Button
+              variant="primary"
+              disabled={!isProjectValid(newProject)}
+              onClick={handleSubmitProject}
+            >
+              Add Project
+            </Button>
+          </Col>
+        </Row>
+      </Modal.Body>
+    </Modal>
   );
 };
 
-const ChooseColorPopup = ({ close, setProjectColor }) => {
-  const handleSubmitColor = (color) => {
-    setProjectColor(color);
-    close();
-  };
-
-  const colorsButtons = colorsList.map((colorObj) => {
-    return (
-      <div key={colorObj["id"]}>
-        <button
-          type="button"
-          style={{ width: "100%", textAlign: "left" }}
-          onClick={() => handleSubmitColor(colorObj["name"])}
-        >
-          <BsFillCircleFill
-            size={10}
-            color={colorObj["color"]}
-            style={{ marginRight: "10px" }}
-          />
-          {colorObj["name"]}
-        </button>
-      </div>
-    );
-  });
-
-  return (
-    <div style={{ height: "200px", overflow: "auto" }}>{colorsButtons}</div>
-  );
-};
+export default AddProjectPopup;

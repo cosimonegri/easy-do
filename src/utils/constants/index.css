@@ -1,4 +1,7 @@
 :root {
-  --sidebarWidth: 68px;
-  --headerHeight: 62px;
+  --sidebarWidth: 120px;
+  --headerHeight: 0px;
+  --sideSpace: 60px;
+  --minContentWidth: 450px;
+  --mainColor: #6247f5;
 }

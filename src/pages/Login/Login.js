@@ -36,11 +36,11 @@ export const Login = () => {
     } catch (error) {
       if (error.code === "auth/internal-error") {
         setError(
-          "Could not connect with the server. Check your connection or try later"
+          "Could not connect with the server. Check your connection or try later."
         );
       } else {
         console.log(error);
-        setError("Failed to log in with Google");
+        setError("Failed to log in with Google.");
       }
       setIsLoadingGoogle(false);
     }
@@ -52,30 +52,32 @@ export const Login = () => {
     setIsLoading(true);
     try {
       await setAuthPersistence(remember);
-      console.log("Persistence setted correctly");
+      console.log("Persistence setted correctly.");
     } catch {
-      console.log("Failed to set desired persistence");
+      console.log("Failed to set desired persistence.");
     }
     try {
       const userCredential = await login(email, password);
       if (userCredential.user.emailVerified) {
         navigate("/app");
       } else {
-        setError("You must first verify the email");
+        setError(
+          "You have to verify your email address. If you can't find the email, check your spam folder."
+        );
         setIsLoading(false);
       }
     } catch (error) {
       if (error.code === "auth/user-not-found") {
-        setError("User not found. Check the email");
+        setError("User not found. Check the email.");
       } else if (error.code === "auth/wrong-password") {
-        setError("Wrong password");
+        setError("Wrong password.");
       } else if (error.code === "auth/network-request-failed") {
         setError(
-          "Could not connect with the server. Check your connection or try later"
+          "Could not connect with the server. Check your connection or try later."
         );
       } else {
         console.log(error);
-        setError("Failed to log in");
+        setError("Failed to log in.");
       }
       setIsLoading(false);
     }

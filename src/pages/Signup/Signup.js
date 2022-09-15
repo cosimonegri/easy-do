@@ -43,11 +43,11 @@ export const Signup = () => {
     } catch (error) {
       if (error.code === "auth/internal-error") {
         setError(
-          "Could not connect with the server.Check your connection or try later"
+          "Could not connect with the server.Check your connection or try later."
         );
       } else {
         console.log(error);
-        setError("Failed to log in with Google");
+        setError("Failed to log in with Google.");
       }
       setIsLoadingGoogle(false);
     }
@@ -60,16 +60,16 @@ export const Signup = () => {
     setIsLoading(true);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Passwords do not match.");
       setIsLoading(false);
       return;
     }
 
     try {
       setAuthPersistence(remember);
-      console.log("Persistence setted correctly");
+      console.log("Persistence setted correctly.");
     } catch {
-      console.log("Failed to set desired persistence");
+      console.log("Failed to set desired persistence.");
     }
 
     try {
@@ -79,20 +79,20 @@ export const Signup = () => {
         await emailVerification();
         setMessage("Verfication email sent to " + email);
       } catch (error) {
-        setError("Failed to send verification email");
+        setError("Failed to send verification email.");
       }
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
-        setError("Email already in use");
+        setError("Email already in use.");
       } else if (error.code === "auth/invalid-email") {
-        setError("Invalid email");
+        setError("Invalid email.");
       } else if (error.code === "auth/network-request-failed") {
         setError(
-          "Could not connect with the server. Check your connection or try later"
+          "Could not connect with the server. Check your connection or try later."
         );
       } else {
         console.log(error);
-        setError("Failed to sign in");
+        setError("Failed to sign in.");
       }
     }
 

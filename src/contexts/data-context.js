@@ -58,16 +58,6 @@ const DataProvider = ({ children }) => {
   const [hasSavedUserData, setHasSavedUserData] = useState(false);
   const { currentUser } = useAuth();
 
-  const deleteMembershipsOfProject = async (projectId) => {
-    const membershipsToDelete = query(
-      collection(db, "projects", projectId, "memberships")
-    );
-    const snapshot = await getDocs(membershipsToDelete);
-    snapshot.forEach((doc) => {
-      deleteDoc(doc.ref);
-    });
-  };
-
   // SET DATABASE PERSISTENCE
   useEffect(() => {
     //HANDLE ERRORS GRAPHICALLY
@@ -149,8 +139,6 @@ const DataProvider = ({ children }) => {
           return membership.projectId;
         }),
       ];
-
-      console.log("aggiornato");
 
       const tasksQuery = query(
         collection(db, "tasks"),
@@ -261,7 +249,7 @@ const DataProvider = ({ children }) => {
   }, [currentUser]);
 
   return (
-    <DataContext.Provider>
+    <DataContext.Provider value={{}}>
       {(!currentUser || hasSavedUserData) &&
       Object.values(isDownloading).every((item) => item === false) ? (
         children

@@ -19,19 +19,21 @@ export const ForgotPassword = () => {
 
     try {
       await resetPassword(email);
-      setMessage("Check your email inbox to change the password");
+      setMessage(
+        "Check your email inbox to change the password. If you can't find the email, check your spam folder."
+      );
     } catch (error) {
       if (error.code === "auth/user-not-found") {
-        setError("User not found. Check the email");
+        setError("User not found. Check the email.");
       } else if (error.code === "auth/invalid-email") {
-        setError("Invalid email");
+        setError("Invalid email.");
       } else if (error.code === "auth/network-request-failed") {
         setError(
-          "Could not connect with the server. Check your connection or try later"
+          "Could not connect with the server. Check your connection or try later."
         );
       } else {
         console.log(error);
-        setError("Failed to reset password");
+        setError("Failed to reset password.");
       }
     }
 

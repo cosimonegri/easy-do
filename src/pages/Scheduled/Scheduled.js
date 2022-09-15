@@ -12,6 +12,7 @@ import {
   areDatesEqual,
   isDateBefore,
 } from "utils/helpers/date.helpers";
+import { mergeTasksSortedByDate } from "utils/helpers/sort.helpers";
 
 import styles from "pages/Scheduled/scheduled.module.css";
 
@@ -23,10 +24,14 @@ export const Scheduled = () => {
 
   const getElements = () => {
     const elements = [];
+    const allTasks = mergeTasksSortedByDate(
+      tasksWithoutProject,
+      tasksWithProject
+    );
     const today = getTodayDate();
     let lastDate = null;
 
-    for (let task of tasksWithoutProject) {
+    for (let task of allTasks) {
       const taskDate = task.dueDate.toDate();
       const dateBefore = isDateBefore(taskDate, today);
 

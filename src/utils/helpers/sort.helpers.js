@@ -1,3 +1,5 @@
+import { isDateBefore } from "utils/helpers/date.helpers";
+
 export const sortTasksByDate = (tasks) => {
   tasks.sort((task1, task2) => {
     const date1 = task1.dueDate.toDate();
@@ -20,4 +22,34 @@ export const sortMembershipsByTitle = (memberships) => {
     const title2 = membership2.projectTitle;
     return title1 === title2 ? 0 : title1 > title2 ? 1 : -1;
   });
+};
+
+export const mergeTasksSortedByDate = (taskList1, taskList2) => {
+  const allTasks = [];
+  let i = 0;
+  let j = 0;
+
+  while (i < taskList1.length && j < taskList2.length) {
+    let date1 = taskList1[i].dueDate.toDate();
+    let date2 = taskList2[j].dueDate.toDate();
+
+    if (!isDateBefore(date2, date1)) {
+      allTasks.push(taskList1[i]);
+      i++;
+    } else {
+      allTasks.push(taskList2[j]);
+      j++;
+    }
+  }
+
+  while (i < taskList1.length) {
+    allTasks.push(taskList1[i]);
+    i++;
+  }
+  while (j < taskList2.length) {
+    allTasks.push(taskList2[j]);
+    j++;
+  }
+
+  return allTasks;
 };

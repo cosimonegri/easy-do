@@ -15,6 +15,8 @@ import {
   isDateBefore,
   getMonthName,
 } from "utils/helpers/date.helpers";
+import { red } from "utils/constants";
+
 import styles from "components/task.module.css";
 
 const Task = ({ task, dateInFooter }) => {
@@ -44,11 +46,26 @@ const Task = ({ task, dateInFooter }) => {
     }
   };
 
+  const isTaskExpired = () => {
+    const date = task.dueDate.toDate();
+    const today = getTodayDate();
+    if (dateInFooter && isDateBefore(date, today)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <div className={styles["task-container"]}>
       <span className={styles["left-content"]}>
         <span className={styles["main-part"]}>{task.title}</span>
-        <span className={styles["footer-part"]}>{getFooter()}</span>
+        <span
+          className={styles["footer-part"]}
+          style={{ color: isTaskExpired() ? red : "grey" }}
+        >
+          {getFooter()}
+        </span>
       </span>
 
       <span className={styles["right-content"]}>

@@ -11,16 +11,6 @@ export const userDataFromTemplate = (currentUser) => {
   };
 };
 
-export const membershipFromTemplate = (projectId, currentUser, role) => {
-  return {
-    projectId: projectId,
-    userId: currentUser.uid,
-    userEmail: currentUser.email,
-    role: role,
-    joinedAt: serverTimestamp(),
-  };
-};
-
 export const getDbPath = (collectionName, documentName, parentProjectName) => {
   if (["tasks", "projects", "users"].includes(collectionName)) {
     if (documentName === undefined) {

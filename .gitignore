@@ -11,3 +11,6 @@
 # added by me
 /ideas
 remember.txt
+.firebase
+.firebaserc
+firebase.json

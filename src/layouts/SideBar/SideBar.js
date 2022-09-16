@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "contexts/auth-context";
 
-import { clearTask, setTaskUserId } from "redux/tasks.slice";
+import { clearTask, setTaskProject, setTaskUserId } from "redux/tasks.slice";
 import { clearProject, setProjectUserId } from "redux/projects.slice";
 
 import AddTaskPopup from "components/AddTaskPopup";
@@ -21,7 +21,9 @@ import folderBlueIcon from "images/folder-blue.png";
 import bellIcon from "images/bell.png";
 import bellBlueIcon from "images/bell-blue.png";
 
-import { grey2 } from "utils/constants";
+import { grey2 } from "utils/constants/constants";
+import { getProjectTitleFromId } from "utils/helpers/helpers";
+
 import styles from "layouts/SideBar/sidebar.module.css";
 
 export const SideBar = () => {
@@ -34,6 +36,8 @@ export const SideBar = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const projects = useSelector((state) => state.projects.projects);
+  const memberships = useSelector((state) => state.memberships.memberships);
   const { currentUser, logout } = useAuth();
 
   const [showAddTaskPopup, setShowAddTaskPopup] = useState(false);
@@ -42,6 +46,20 @@ export const SideBar = () => {
 
   const openAddTaskPopup = () => {
     dispatch(clearTask());
+
+    const urlWords = window.location.href.split("/");
+    const potentialProjectId = urlWords[urlWords.length - 1];
+    const potentialProjectTitle = getProjectTitleFromId(
+      potentialProjectId,
+      projects,
+      memberships
+    );
+    if (potentialProjectTitle !== null) {
+      dispatch(
+        setTaskProject({ id: potentialProjectId, title: potentialProjectTitle })
+      );
+    }
+
     dispatch(setTaskUserId(currentUser.uid));
     setShowAddTaskPopup(true);
   };
@@ -93,12 +111,12 @@ export const SideBar = () => {
     <>
       <AddTaskPopup
         show={showAddTaskPopup}
-        handleClose={() => setShowAddTaskPopup(false)}
+        close={() => setShowAddTaskPopup(false)}
       />
 
       <AddProjectPopup
         show={showAddProjectPopup}
-        handleClose={() => setShowAddProjectPopup(false)}
+        close={() => setShowAddProjectPopup(false)}
       />
 
       <div id={styles["sidebar-outer"]}>

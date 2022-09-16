@@ -28,28 +28,28 @@ const AuthProvider = ({ children }) => {
   const signup = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
   };
+
   const login = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
   };
+
   const logout = () => {
     return signOut(auth);
   };
+
   const emailVerification = () => {
     return sendEmailVerification(auth.currentUser);
   };
+
   const resetPassword = (email) => {
     return sendPasswordResetEmail(auth, email);
   };
+
   const loginWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(auth, provider);
   };
-  const updateEmail = (email) => {
-    return; //
-  };
-  const updatePassword = (password) => {
-    return; //
-  };
+
   const setAuthPersistence = (persistent) => {
     const persistenceType = persistent
       ? browserLocalPersistence

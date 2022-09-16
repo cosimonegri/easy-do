@@ -1,0 +1,29 @@
+@import "utils/constants/constants.css";
+
+#buttons-row {
+  display: flex;
+  justify-content: end;
+  flex-wrap: wrap;
+}
+
+#submit-btn {
+  background-color: var(--mainColor);
+  border: none;
+  outline: none;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  border-radius: 4px;
+  height: 38px;
+}
+
+#submit-btn:disabled,
+#submit-btn[disabled] {
+  background-color: var(--blurMainColor);
+}
+
+#cancel-btn {
+  margin-right: 10px;
+  height: 38px;
+}

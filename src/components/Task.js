@@ -9,13 +9,11 @@ import binIcon from "images/bin.png";
 import binRedIcon from "images/bin-red.png";
 
 import {
+  getPrettyDateString,
   getTodayDate,
-  getTomorrowDate,
-  areDatesEqual,
   isDateBefore,
-  getMonthName,
 } from "utils/helpers/date.helpers";
-import { red } from "utils/constants";
+import { red } from "utils/constants/constants";
 
 import styles from "components/task.module.css";
 
@@ -30,20 +28,7 @@ const Task = ({ task, dateInFooter }) => {
     if (!dateInFooter) {
       return task.projectTitle;
     }
-
-    const date = task.dueDate.toDate();
-    const today = getTodayDate();
-    const tomorrow = getTomorrowDate();
-
-    if (isDateBefore(date, today)) {
-      return "Expired";
-    } else if (areDatesEqual(date, today)) {
-      return "Today";
-    } else if (areDatesEqual(date, tomorrow)) {
-      return "Tomorrow";
-    } else {
-      return `${date.getDate()} ${getMonthName(date)} ${date.getFullYear()}`;
-    }
+    return getPrettyDateString(task.dueDate.toDate());
   };
 
   const isTaskExpired = () => {

@@ -34,6 +34,7 @@ const initialState = {
   tasksWithoutProject: [],
   tasksWithProject: [],
   newTask: getInitialTask(),
+  selectedProjectId: "", // Id of the current project if you are in a "Project Page"
 };
 
 export const addTask = createAsyncThunk(
@@ -86,6 +87,9 @@ export const tasksSlice = createSlice({
     clearAllTasksWithProject: (state) => {
       state.tasksWithProject = [];
     },
+    setSelectedProjectId: (state, action) => {
+      state.selectedProjectId = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -116,6 +120,7 @@ export const {
   setTaskProject,
   setTaskUserId,
   clearAllTasksWithProject,
+  setSelectedProjectId,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

@@ -1,4 +1,7 @@
+@import "utils/constants/constants.css";
+
 .add-button {
+  background-color: var(--mainColor);
   border: none;
   outline: none;
   padding: 6px 16px 6px 8px;

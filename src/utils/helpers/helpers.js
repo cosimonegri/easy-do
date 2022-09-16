@@ -1,5 +1,4 @@
-import { serverTimestamp } from "firebase/firestore";
-import { TOAST_TIME } from "utils/constants";
+import { TOAST_TIME } from "utils/constants/constants";
 
 export const userDataFromTemplate = (currentUser) => {
   return {
@@ -24,6 +23,20 @@ export const getDbPath = (collectionName, documentName, parentProjectName) => {
   }
 
   throw new Error("Invalid arguments.");
+};
+
+export const getProjectTitleFromId = (projectId, projects, memberships) => {
+  for (let project of projects) {
+    if (project.id === projectId) {
+      return project.title;
+    }
+  }
+  for (let membership of memberships) {
+    if (membership.projectId === projectId) {
+      return membership.projectTitle;
+    }
+  }
+  return null;
 };
 
 export const getToastStyle = () => {

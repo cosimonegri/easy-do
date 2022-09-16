@@ -1,5 +1,5 @@
 export const isTaskValid = (task) => {
-  //! forse levare dueDate
+  //! levare dueDate per poter creare task senza data
   return task.dueDate && task.title && task.title.length <= 200;
 };
 
@@ -8,5 +8,5 @@ export const isProjectValid = (project) => {
 };
 
 export const isInvitationValid = (invitation) => {
-  return invitation.toEmail; //! check that email exists
+  return invitation.toEmail;
 };

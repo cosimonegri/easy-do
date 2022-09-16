@@ -1,6 +1,6 @@
 import React from "react";
 
-import { blue, grey1 } from "utils/constants";
+import { blue, grey1 } from "utils/constants/constants";
 import styles from "pages/ProjectPage/sharebutton.module.css";
 
 const ShareButton = ({ onClickFunction }) => {

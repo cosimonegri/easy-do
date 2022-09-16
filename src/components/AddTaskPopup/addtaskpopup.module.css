@@ -1,0 +1,52 @@
+@import "utils/constants/constants.css";
+
+.choose-project-dropdown > button {
+  max-width: 300px;
+  word-break: break-word;
+  overflow-wrap: break-all;
+  white-space: normal;
+}
+
+#buttons-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#left-buttons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#right-buttons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#left-buttons > div {
+  margin-right: 10px;
+}
+
+#submit-btn {
+  background-color: var(--mainColor);
+  border: none;
+  outline: none;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  border-radius: 4px;
+  height: 38px;
+}
+
+#submit-btn:disabled,
+#submit-btn[disabled] {
+  background-color: var(--blurMainColor);
+}
+
+#cancel-btn {
+  margin-right: 10px;
+  height: 38px;
+}

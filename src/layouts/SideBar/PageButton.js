@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { grey4 } from "utils/constants";
+import { grey4 } from "utils/constants/constants";
 import styles from "layouts/SideBar/pagebutton.module.css";
 
 const PageButton = ({

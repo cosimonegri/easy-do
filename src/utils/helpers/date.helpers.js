@@ -57,3 +57,18 @@ export const isDateBefore = (date1, date2) => {
     return false;
   }
 };
+
+export const getPrettyDateString = (date) => {
+  const today = getTodayDate();
+  const tomorrow = getTomorrowDate();
+
+  if (isDateBefore(date, today)) {
+    return "Expired";
+  } else if (areDatesEqual(date, today)) {
+    return "Today";
+  } else if (areDatesEqual(date, tomorrow)) {
+    return "Tomorrow";
+  } else {
+    return `${date.getDate()} ${getMonthName(date)} ${date.getFullYear()}`;
+  }
+};

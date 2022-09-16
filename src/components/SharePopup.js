@@ -1,12 +1,15 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Modal, Form, Row, Button } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
+
+import Textarea from "components/Textarea";
 
 import { addInvitation, setInvitationToEmail } from "redux/invitations.slice";
 
 import { isInvitationValid } from "utils/helpers/valid.helpers";
+import styles from "components/sharepopup.module.css";
 
-const SharePopup = ({ show, handleClose }) => {
+const SharePopup = ({ show, close }) => {
   const dispatch = useDispatch();
   const newInvitation = useSelector((state) => state.invitations.newInvitation);
 
@@ -16,46 +19,42 @@ const SharePopup = ({ show, handleClose }) => {
 
   const handleSubmitInvitation = (event) => {
     event.preventDefault();
-    dispatch(addInvitation());
-    handleClose();
-  };
-
-  const handleSubmitWithEnter = (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-
-      if (isInvitationValid(newInvitation)) {
-        handleSubmitInvitation(event);
-      }
+    if (isInvitationValid(newInvitation)) {
+      dispatch(addInvitation());
+      close();
     }
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={close}>
       <Modal.Body>
-        <Row className="mt-3 d-flex align-items-center">
-          <Form>
-            <Form.Group className="mb-3" controlId="shareEmail">
-              <Form.Control
-                autoFocus
-                type="email"
-                placeholder="Email"
-                value={newInvitation.toEmail}
-                onChange={changeEmail}
-                onKeyPress={handleSubmitWithEnter}
-                spellCheck={false}
-              />
-            </Form.Group>
-          </Form>
+        <Textarea
+          text={newInvitation.toEmail}
+          onChangeFunction={changeEmail}
+          onSubmitFunction={handleSubmitInvitation}
+          placeholder="Email"
+          rows={1}
+        />
 
+        <div id={styles["buttons-row"]}>
           <Button
-            variant="primary"
-            disabled={!isInvitationValid(newInvitation)}
+            id={styles["cancel-btn"]}
+            type="button"
+            onClick={close}
+            variant="outline-secondary"
+          >
+            Cancel
+          </Button>
+
+          <button
+            id={styles["submit-btn"]}
+            type="submit"
             onClick={handleSubmitInvitation}
+            disabled={!isInvitationValid(newInvitation)}
           >
             Invite
-          </Button>
-        </Row>
+          </button>
+        </div>
       </Modal.Body>
     </Modal>
   );

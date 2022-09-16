@@ -12,6 +12,8 @@ import rightIcon from "images/right.png";
 import rightBlueIcon from "images/right-blue.png";
 import binIcon from "images/bin.png";
 import binRedIcon from "images/bin-red.png";
+import exitIcon from "images/exit.png";
+import exitRedIcon from "images/exit-red.png";
 
 import styles from "pages/Projects/singleproject.module.css";
 
@@ -44,8 +46,8 @@ const SingleProject = ({ projectId, projectTitle, iAmOwner }) => {
 
       <span className={styles["right-content"]}>
         <HoverIcon
-          icon={binIcon}
-          hoverIcon={binRedIcon}
+          icon={iAmOwner ? binIcon : exitIcon}
+          hoverIcon={iAmOwner ? binRedIcon : exitRedIcon}
           onClickFunction={handleDeleteOrLeaveProject}
         />
       </span>

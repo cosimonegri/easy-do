@@ -5,7 +5,7 @@ import { AuthProvider } from "contexts/auth-context";
 import { DataProvider } from "contexts/data-context";
 import { RoutesList } from "routes";
 
-import { grey1 } from "utils/constants";
+import { grey1 } from "utils/constants/constants";
 
 // TODO: creare email supporto per il progetto e metterla sua firebase al posto della mia
 
@@ -18,7 +18,6 @@ import { grey1 } from "utils/constants";
 // possibilità di creare task senza data
 
 // chiedere se sei sicuro prima di eliminare un progetto con un toast
-// owener aggiunge propria membership nel progetto
 
 const App = () => {
   document.body.style.backgroundColor = grey1;

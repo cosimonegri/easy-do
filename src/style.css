@@ -1,4 +1,4 @@
-@import "utils/constants/index.css";
+@import "utils/constants/constants.css";
 
 * {
   font-family: "Roboto", sans-serif;
@@ -22,9 +22,67 @@ button {
   padding: 0;
   margin: 0;
   background-color: transparent;
+  box-shadow: none !important;
 }
 
 input,
 textarea {
   text-decoration: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* add task popup has to be larger than the others */
+#add-task-popup {
+  max-width: 600px;
+}
+
+/* CHANGE DEFAULT REACT BOOTSTRAP STYLES */
+
+.btn-primary {
+  background-color: var(--mainColor) !important;
+  border-color: var(--mainColor) !important;
+}
+
+.btn-outline-primary {
+  border-color: var(--mainColor) !important;
+  color: var(--mainColor) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--mainColor) !important;
+  color: white !important;
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--veryLightGray) !important;
+  color: grey;
+}
+
+.dropdown-toggle::after {
+  visibility: hidden;
+  margin: 0;
+  border: 0;
+}
+
+/* CHANGE DEFAULT REACT DATE PICKER STYLES */
+
+.react-datepicker__day--outside-month {
+  color: transparent;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--selected:hover {
+  background-color: var(--mainColor);
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: white;
+  color: black;
+}
+
+.react-datepicker__day--keyboard-selected:hover {
+  background-color: var(--veryLightGray);
 }

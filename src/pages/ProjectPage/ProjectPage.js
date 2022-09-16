@@ -74,7 +74,7 @@ export const ProjectPage = ({ projectId, projectTitle }) => {
     <Main>
       <SharePopup
         show={showSharePopup}
-        handleClose={() => setShowSharePopup(false)}
+        close={() => setShowSharePopup(false)}
       />
 
       <div className={styles.header}>

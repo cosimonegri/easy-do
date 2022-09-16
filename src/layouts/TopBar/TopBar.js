@@ -11,7 +11,7 @@ import AddProjectPopup from "components/AddProjectPopup";
 import AddButton from "layouts/SideBar/AddButton";
 import LogoutButton from "layouts/SideBar/LogoutButton";
 
-import { grey1, grey2 } from "utils/constants";
+import { grey1, grey2 } from "utils/constants/constants";
 import styles from "layouts/TopBar/topbar.module.css";
 
 export const TopBar = () => {

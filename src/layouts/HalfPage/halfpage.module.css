@@ -1,4 +1,4 @@
-@import "utils/constants/index.css";
+@import "utils/constants/constants.css";
 
 .left-half {
   width: calc(100% / 2);

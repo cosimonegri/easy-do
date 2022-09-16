@@ -1,5 +1,4 @@
 import React from "react";
-import TopBar from "layouts/TopBar";
 import SideBar from "layouts/SideBar";
 
 import styles from "layouts/Main/main.module.css";

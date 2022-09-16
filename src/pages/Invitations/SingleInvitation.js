@@ -17,13 +17,14 @@ import checkBlueIcon from "images/check-blue.png";
 import binIcon from "images/bin.png";
 import binRedIcon from "images/bin-red.png";
 
-import { MAX_MEMBERSHIPS } from "utils/constants/constants";
+import { MAX_PROJECTS } from "utils/constants/constants";
 import { getToastStyle } from "utils/helpers/helpers";
 
 import styles from "pages/Invitations/singleinvitation.module.css";
 
 const SingleInvitation = ({ invitation }) => {
   const dispatch = useDispatch();
+  const projects = useSelector((state) => state.projects.projects);
   const memberships = useSelector((state) => state.memberships.memberships);
   const { currentUser } = useAuth();
 
@@ -37,10 +38,10 @@ const SingleInvitation = ({ invitation }) => {
   };
 
   const handleAcceptInvitation = () => {
-    if (memberships.length >= MAX_MEMBERSHIPS) {
+    if (projects.length + memberships.length >= MAX_PROJECTS) {
       toast.dismiss();
       toast.error(
-        `You've reached the limit of ${MAX_MEMBERSHIPS} shared projects.`,
+        `You've reached the limit of ${MAX_PROJECTS} shared projects.`,
         getToastStyle()
       );
       return;

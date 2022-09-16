@@ -7,5 +7,4 @@ export const red = "#DE4040";
 
 export const TOAST_TIME = 3000; // in milliseconds
 
-export const MAX_PROJECTS = 5;
-export const MAX_MEMBERSHIPS = 5;
+export const MAX_PROJECTS = 10;

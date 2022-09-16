@@ -16,6 +16,7 @@ import styles from "components/addprojectpopup.module.css";
 const AddProjectPopup = ({ show, close }) => {
   const dispatch = useDispatch();
   const projects = useSelector((state) => state.projects.projects);
+  const memberships = useSelector((state) => state.memberships.memberships);
   const newProject = useSelector((state) => state.projects.newProject);
 
   const changeTitle = (event) => {
@@ -28,8 +29,7 @@ const AddProjectPopup = ({ show, close }) => {
     if (!isProjectValid(newProject)) {
       return;
     }
-    console.log("ciao");
-    if (projects.length >= MAX_PROJECTS) {
+    if (projects.length + memberships.length >= MAX_PROJECTS) {
       toast.dismiss();
       toast.error(
         `You've reached the limit of ${MAX_PROJECTS} projects.`,

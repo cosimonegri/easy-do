@@ -13,7 +13,6 @@ import Scheduled from "pages/Scheduled";
 import Projects from "pages/Projects";
 import Invitations from "pages/Invitations";
 import ProjectPage from "pages/ProjectPage";
-import Error404 from "pages/Error404";
 
 export const RoutesList = () => {
   const projects = useSelector((state) => state.projects.projects);
@@ -120,7 +119,7 @@ export const RoutesList = () => {
 
       {getProjectPages()}
 
-      <Route path="*" element={<Error404 />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };

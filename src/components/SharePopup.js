@@ -52,7 +52,7 @@ const SharePopup = ({ show, close }) => {
             onClick={handleSubmitInvitation}
             disabled={!isInvitationValid(newInvitation)}
           >
-            Invite
+            Invite User
           </button>
         </div>
       </Modal.Body>

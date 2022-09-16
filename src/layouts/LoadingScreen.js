@@ -1,16 +1,11 @@
 import React from "react";
+import { Spinner } from "react-bootstrap";
+import styles from "layouts/loadingscreen.module.css";
 
 export const LoadingScreen = () => {
   return (
-    <h1
-      style={{
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-      }}
-    >
-      Retrieving user data...
-    </h1>
+    <div id={styles.loading}>
+      <Spinner animation="border" variant="primary" role="status" />
+    </div>
   );
 };

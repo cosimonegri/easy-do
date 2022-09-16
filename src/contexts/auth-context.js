@@ -12,6 +12,7 @@ import {
   browserLocalPersistence,
   browserSessionPersistence,
 } from "firebase/auth";
+
 import { auth } from "utils/firebase";
 import { LoadingScreen } from "layouts/LoadingScreen";
 
@@ -80,7 +81,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!isRetrievingUser && children}
+      {!isRetrievingUser ? children : <LoadingScreen />}
     </AuthContext.Provider>
   );
 };

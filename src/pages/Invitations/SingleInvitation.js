@@ -1,5 +1,6 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 import { deleteInvitation } from "redux/invitations.slice";
 import {
@@ -16,10 +17,14 @@ import checkBlueIcon from "images/check-blue.png";
 import binIcon from "images/bin.png";
 import binRedIcon from "images/bin-red.png";
 
+import { MAX_MEMBERSHIPS } from "utils/constants/constants";
+import { getToastStyle } from "utils/helpers/helpers";
+
 import styles from "pages/Invitations/singleinvitation.module.css";
 
 const SingleInvitation = ({ invitation }) => {
   const dispatch = useDispatch();
+  const memberships = useSelector((state) => state.memberships.memberships);
   const { currentUser } = useAuth();
 
   const handleDeleteInvitation = () => {
@@ -32,6 +37,15 @@ const SingleInvitation = ({ invitation }) => {
   };
 
   const handleAcceptInvitation = () => {
+    if (memberships.length >= MAX_MEMBERSHIPS) {
+      toast.dismiss();
+      toast.error(
+        `You've reached the limit of ${MAX_MEMBERSHIPS} shared projects.`,
+        getToastStyle()
+      );
+      return;
+    }
+
     dispatch(
       setMembershipProject({
         id: invitation.projectId,

@@ -14,10 +14,15 @@ import { grey1 } from "utils/constants/constants";
 // 2. fare entrare l'utente come opsite (può usare l'app ma i dati non verranno scritti sul server,
 // e inoltre verranno persi al refresh della pagina)
 
-// impedire creazione 2 progetti con stesso nome
-// possibilità di creare task senza data
-
+// impedire creazione 2 progetti con stesso nome  ???
+// non piu di 5 progetti per utente
+// possibilità di creare task senza data (al posto) di tomorrow in home ???
+// sistemare listener users
+// sistemare auth context
+// poter aggiornare task e progetti + alcuni dati immodificabili con firestore rules
 // chiedere se sei sicuro prima di eliminare un progetto con un toast
+// grafica dei titolini in scheduled page
+// cambiare titolo a Scheduled ???
 
 const App = () => {
   document.body.style.backgroundColor = grey1;

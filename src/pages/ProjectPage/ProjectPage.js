@@ -60,7 +60,7 @@ export const ProjectPage = ({ projectId, projectTitle }) => {
       toast.success(invitationSuccess, getToastStyle());
       dispatch(resetInvitationSuccess());
     }
-  }, [invitationSuccess]);
+  }, [invitationSuccess, dispatch]);
 
   useEffect(() => {
     if (invitationError) {
@@ -68,7 +68,7 @@ export const ProjectPage = ({ projectId, projectTitle }) => {
       toast.error(invitationError, getToastStyle());
       dispatch(resetInvitationError());
     }
-  }, [invitationError]);
+  }, [invitationError, dispatch]);
 
   return (
     <Main>

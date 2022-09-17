@@ -5,6 +5,7 @@ import Main from "layouts/Main";
 import HalfPage from "layouts/HalfPage";
 import PageTitle from "components/PageTitle";
 import SingleProject from "pages/Projects/SingleProject";
+import SingleMembership from "pages/Projects/SingleMembership";
 
 import styles from "pages/Projects/projects.module.css";
 
@@ -14,26 +15,14 @@ export const Projects = () => {
 
   const getYourProjectElements = () => {
     return projects.map((project) => {
-      return (
-        <SingleProject
-          key={project.id}
-          projectId={project.id}
-          projectTitle={project.title}
-          iAmOwner={true}
-        />
-      );
+      return <SingleProject key={project.id} project={project} />;
     });
   };
 
   const getSharedProjectElements = () => {
     return memberships.map((membership) => {
       return (
-        <SingleProject
-          key={membership.projectId}
-          projectId={membership.projectId}
-          projectTitle={membership.projectTitle}
-          iAmOwner={false}
-        />
+        <SingleMembership key={membership.projectId} membership={membership} />
       );
     });
   };

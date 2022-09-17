@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   addDoc,
+  updateDoc,
   deleteDoc,
   getDocs,
   query,
@@ -18,11 +19,10 @@ const getInitialProject = () => {
   return {
     title: "",
     userId: "", // of the owner of the project
-    createdAt: null,
   };
 };
 
-const getFinalProject = (project) => {
+const getProjectWithCreationDate = (project) => {
   return {
     ...project,
     createdAt: serverTimestamp(),
@@ -32,15 +32,45 @@ const getFinalProject = (project) => {
 const initialState = {
   projects: [],
   newProject: getInitialProject(),
+  updateProjectId: null, //id of the project that is being updated
 };
 
 export const addProject = createAsyncThunk(
   "projects/addProject",
   async (_, thunkAPI) => {
     let newProject = thunkAPI.getState().projects.newProject;
-    newProject = getFinalProject(newProject);
+    newProject = getProjectWithCreationDate(newProject);
     const docRef = await addDoc(collection(db, "projects"), newProject);
     return docRef.id;
+  }
+);
+
+export const updateProject = createAsyncThunk(
+  "projects/updateProject",
+  async (_, thunkAPI) => {
+    const newProject = thunkAPI.getState().projects.newProject;
+    const projectId = thunkAPI.getState().projects.updateProjectId;
+    await updateDoc(doc(db, `projects/${projectId}`), newProject);
+
+    // Update the projectTitle in all the memberships of the project
+    const membershipsToUpdate = query(
+      collection(db, "projects", projectId, "memberships")
+    );
+    const membershipSnapshot = await getDocs(membershipsToUpdate);
+    membershipSnapshot.forEach(async (doc) => {
+      await updateDoc(doc.ref, { projectTitle: newProject.title });
+    });
+
+    // Update the projectTitle in all the memberships of the project
+    const invitationsToUpdate = query(
+      collection(db, "projects", projectId, "invitations")
+    );
+    const invitationsSnapshot = await getDocs(invitationsToUpdate);
+    invitationsSnapshot.forEach(async (doc) => {
+      await updateDoc(doc.ref, { projectTitle: newProject.title });
+    });
+
+    return projectId;
   }
 );
 
@@ -60,21 +90,21 @@ export const deleteProject = createAsyncThunk(
       await deleteDoc(doc.ref);
     });
 
-    // Delete all the invitations to the project
-    const invitationsToDelete = query(
-      collection(db, "projects", projectId, "invitations")
-    );
-    const invitationSnapshot = await getDocs(invitationsToDelete);
-    invitationSnapshot.forEach(async (doc) => {
-      await deleteDoc(doc.ref);
-    });
-
     // Delete all the memberships of the project
     const membershipsToDelete = query(
       collection(db, "projects", projectId, "memberships")
     );
     const membershipSnapshot = await getDocs(membershipsToDelete);
     membershipSnapshot.forEach(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
+
+    // Delete all the invitations to the project
+    const invitationsToDelete = query(
+      collection(db, "projects", projectId, "invitations")
+    );
+    const invitationSnapshot = await getDocs(invitationsToDelete);
+    invitationSnapshot.forEach(async (doc) => {
       await deleteDoc(doc.ref);
     });
 
@@ -90,14 +120,22 @@ export const projectsSlice = createSlice({
       sortProjectsByTitle(action.payload);
       state.projects = action.payload;
     },
-    clearProject: (state) => {
+
+    setNewProject: (state, action) => {
+      state.newProject = { ...action.payload };
+    },
+    clearNewProject: (state) => {
       state.newProject = getInitialProject();
     },
-    setProjectTitle: (state, action) => {
+    setNewProjectTitle: (state, action) => {
       state.newProject.title = action.payload;
     },
-    setProjectUserId: (state, action) => {
+    setNewProjectUserId: (state, action) => {
       state.newProject.userId = action.payload;
+    },
+
+    setUpdateProjectId: (state, action) => {
+      state.updateProjectId = action.payload;
     },
   },
 
@@ -110,18 +148,31 @@ export const projectsSlice = createSlice({
       console.log(action.error.message);
     });
 
+    builder.addCase(updateProject.fulfilled, (_, action) => {
+      console.log(`Updated project ${action.payload}`);
+    });
+    builder.addCase(updateProject.rejected, (_, action) => {
+      console.log(`Could not update project ${action.payload}`);
+      console.log(action.error.message);
+    });
+
     builder.addCase(deleteProject.fulfilled, (_, action) => {
       console.log(`Deleted project ${action.payload}`);
     });
     builder.addCase(deleteProject.rejected, (_, action) => {
-      console.log(action);
       console.log(`Could not delete project ${action.payload}`);
       console.log(action.error.message);
     });
   },
 });
 
-export const { setProjects, clearProject, setProjectTitle, setProjectUserId } =
-  projectsSlice.actions;
+export const {
+  setProjects,
+  setNewProject,
+  clearNewProject,
+  setNewProjectTitle,
+  setNewProjectUserId,
+  setUpdateProjectId,
+} = projectsSlice.actions;
 
 export default projectsSlice.reducer;

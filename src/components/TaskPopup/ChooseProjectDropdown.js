@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Dropdown } from "react-bootstrap";
 
-import { setTaskProject } from "redux/tasks.slice";
+import { setNewTaskProjectId } from "redux/tasks.slice";
 
 const ChooseProjectDropdown = () => {
   const dispatch = useDispatch();
@@ -11,9 +11,9 @@ const ChooseProjectDropdown = () => {
 
   const changeProject = (project) => {
     if (project) {
-      dispatch(setTaskProject(project));
+      dispatch(setNewTaskProjectId(project.id));
     } else {
-      dispatch(setTaskProject({ id: "", title: "" }));
+      dispatch(setNewTaskProjectId(""));
     }
   };
 

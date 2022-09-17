@@ -13,7 +13,6 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  inline-size: calc(100% - 30px);
   word-break: break-word;
   padding-top: 2px;
 }
@@ -21,6 +20,10 @@
 .right-content {
   display: flex;
   align-items: center;
+}
+
+.right-content > button {
+  margin-left: 14px;
 }
 
 .main-part {

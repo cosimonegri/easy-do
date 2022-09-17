@@ -4,7 +4,7 @@ export const isTaskValid = (task) => {
 };
 
 export const isProjectValid = (project) => {
-  return project.title && project.title.length <= 60;
+  return project.title && project.title.length <= 100;
 };
 
 export const isInvitationValid = (invitation) => {

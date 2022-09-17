@@ -1,31 +1,54 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal, DropdownButton, Button } from "react-bootstrap";
 
 import Textarea from "components/Textarea";
-import ChooseDateDropdown from "components/AddTaskPopup/ChooseDateDropdown";
-import ChooseProjectDropdown from "components/AddTaskPopup/ChooseProjectDropdown";
+import ChooseDateDropdown from "components/TaskPopup/ChooseDateDropdown";
+import ChooseProjectDropdown from "components/TaskPopup/ChooseProjectDropdown";
 
-import { addTask, setTaskTitle } from "redux/tasks.slice";
+import {
+  addTask,
+  updateTask,
+  setNewTaskTitle,
+  setNewTaskUserId,
+} from "redux/tasks.slice";
+import { closeTaskPopup } from "redux/popups.slice";
+import { useAuth } from "contexts/auth-context";
 
 import { isTaskValid } from "utils/helpers/valid.helpers";
 import { getPrettyDateString } from "utils/helpers/date.helpers";
+import { getProjectTitleFromId } from "utils/helpers/helpers";
 
-import styles from "components/AddTaskPopup/addtaskpopup.module.css";
+import styles from "components/TaskPopup/taskpopup.module.css";
 
-export const AddTaskPopup = ({ show, close }) => {
+export const TaskPopup = () => {
   const dispatch = useDispatch();
+  const { currentUser } = useAuth();
   const newTask = useSelector((state) => state.tasks.newTask);
+  const projects = useSelector((state) => state.projects.projects);
+  const memberships = useSelector((state) => state.memberships.memberships);
+
+  const show = useSelector((state) => state.popups.showTaskPopup);
+  const isCreating = useSelector((state) => state.popups.isCreating);
+  const isUpdating = useSelector((state) => state.popups.isUpdating);
 
   const changeTitle = (event) => {
-    dispatch(setTaskTitle(event.target.value));
+    dispatch(setNewTaskTitle(event.target.value));
   };
 
   const handleSubmitTask = (event) => {
     event.preventDefault();
-    if (isTaskValid(newTask)) {
+    if (!isTaskValid(newTask)) {
+      return;
+    }
+    if (isCreating) {
       dispatch(addTask());
-      close();
+      dispatch(closeTaskPopup());
+    } else if (isUpdating) {
+      dispatch(updateTask());
+      dispatch(closeTaskPopup());
+    } else {
+      throw new Error("Action not specified (create or update.");
     }
   };
 
@@ -36,12 +59,35 @@ export const AddTaskPopup = ({ show, close }) => {
       dateDropdown.ariaExpanded === "false" &&
       projectDropdown.ariaExpanded === "false"
     ) {
-      close();
+      dispatch(closeTaskPopup());
     }
   };
 
+  const getTaskProjectTitle = () => {
+    const projectTitle = getProjectTitleFromId(
+      newTask.projectId,
+      projects,
+      memberships
+    );
+    if (projectTitle) {
+      return projectTitle;
+    } else {
+      return "No Project";
+    }
+  };
+
+  useEffect(() => {
+    dispatch(setNewTaskUserId(currentUser.uid));
+
+    const textarea = document.getElementById("focus-textarea");
+    if (textarea) {
+      textarea.focus();
+      textarea.selectionStart = textarea.value.length;
+    }
+  }, [show]);
+
   return (
-    <Modal show={show} onHide={handlePopupClose} id={"add-task-popup"}>
+    <Modal show={show} onHide={handlePopupClose} id="add-task-popup">
       <Modal.Body>
         <Textarea
           text={newTask.title}
@@ -65,7 +111,7 @@ export const AddTaskPopup = ({ show, close }) => {
             <DropdownButton
               id={"choose-project-dropdown"}
               className={styles["choose-project-dropdown"]}
-              title={newTask.projectTitle ? newTask.projectTitle : "No Project"}
+              title={getTaskProjectTitle()}
               size="sm"
               variant="outline-secondary"
             >
@@ -77,7 +123,7 @@ export const AddTaskPopup = ({ show, close }) => {
             <Button
               id={styles["cancel-btn"]}
               type="button"
-              onClick={close}
+              onClick={() => dispatch(closeTaskPopup())}
               variant="outline-secondary"
             >
               Cancel
@@ -89,7 +135,7 @@ export const AddTaskPopup = ({ show, close }) => {
               onClick={handleSubmitTask}
               disabled={!isTaskValid(newTask)}
             >
-              Add Task
+              {isCreating ? "Add Task" : isUpdating ? "Update Task" : ""}
             </button>
           </span>
         </div>

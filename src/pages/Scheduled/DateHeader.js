@@ -7,6 +7,7 @@ import {
   getMonthName,
   areDatesEqual,
 } from "utils/helpers/date.helpers";
+import styles from "pages/Scheduled/dateheader.module.css";
 
 const DateHeader = ({ date }) => {
   const getDateHeaderString = () => {
@@ -24,7 +25,7 @@ const DateHeader = ({ date }) => {
     )} ${date.getFullYear()} \u00B7 ${getDayName(date)} ${extraString}`;
   };
 
-  return <div>{getDateHeaderString()}</div>;
+  return <div className={styles["date-header"]}>{getDateHeaderString()}</div>;
 };
 
 export default DateHeader;

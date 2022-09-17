@@ -10,7 +10,6 @@ const getInitialInvitation = () => {
     projectTitle: "",
     toEmail: "",
     fromEmail: "",
-    createdAt: null,
   };
 };
 

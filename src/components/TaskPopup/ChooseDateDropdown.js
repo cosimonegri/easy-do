@@ -2,14 +2,14 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import DatePicker from "react-datepicker";
 
-import { setTaskDueDate } from "redux/tasks.slice";
+import { setNewTaskDueDate } from "redux/tasks.slice";
 
 const ChooseDateDropdown = () => {
   const dispatch = useDispatch();
   const newTask = useSelector((state) => state.tasks.newTask);
 
   const changeDueDate = (date) => {
-    dispatch(setTaskDueDate(date));
+    dispatch(setNewTaskDueDate(date));
   };
 
   return (

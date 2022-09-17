@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import Main from "layouts/Main";
 import PageTitle from "components/PageTitle";
 import Task from "components/Task";
-import ExpiredHeader from "pages/Scheduled/ExpiredHeader";
 import DateHeader from "pages/Scheduled/DateHeader";
+import ExpiredHeader from "pages/Scheduled/ExpiredHeader";
 
 import {
   getTodayDate,

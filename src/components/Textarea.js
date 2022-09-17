@@ -17,6 +17,7 @@ const Textarea = ({
 
   return (
     <textarea
+      id="focus-textarea"
       className={styles.textarea}
       type="text"
       value={text}

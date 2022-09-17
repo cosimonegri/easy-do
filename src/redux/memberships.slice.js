@@ -11,7 +11,6 @@ const getInitialMembership = () => {
     projectTitle: "",
     userId: "",
     userEmail: "",
-    joinedAt: null,
   };
 };
 

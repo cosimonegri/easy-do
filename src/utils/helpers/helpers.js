@@ -25,6 +25,7 @@ export const getDbPath = (collectionName, documentName, parentProjectName) => {
   throw new Error("Invalid arguments.");
 };
 
+//! should be optimized using a hash table
 export const getProjectTitleFromId = (projectId, projects, memberships) => {
   for (let project of projects) {
     if (project.id === projectId) {

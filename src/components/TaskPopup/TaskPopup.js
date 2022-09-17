@@ -77,7 +77,9 @@ export const TaskPopup = () => {
   };
 
   useEffect(() => {
-    dispatch(setNewTaskUserId(currentUser.uid));
+    if (currentUser) {
+      dispatch(setNewTaskUserId(currentUser.uid));
+    }
 
     const textarea = document.getElementById("focus-textarea");
     if (textarea) {

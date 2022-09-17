@@ -60,7 +60,9 @@ const ProjectPopup = () => {
   };
 
   useEffect(() => {
-    dispatch(setNewProjectUserId(currentUser.uid));
+    if (currentUser) {
+      dispatch(setNewProjectUserId(currentUser.uid));
+    }
 
     const textarea = document.getElementById("focus-textarea");
     if (textarea) {

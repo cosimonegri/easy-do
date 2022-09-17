@@ -1,7 +1,7 @@
 @import "utils/constants/constants.css";
 
 #main {
-  position: fixed;
+  position: relative;
   overflow: auto;
   top: var(--headerHeight);
   left: var(--sidebarWidth);
